@@ -126,3 +126,11 @@ input:focus {
 .conn-dot.on {
   background: var(--good);
 }
+
+@keyframes timerPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+.timer-pulse {
+  animation: timerPulse 1s ease-in-out infinite;
+}

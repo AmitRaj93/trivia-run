@@ -5,6 +5,7 @@ import { useGameSocket } from '../../lib/useGameSocket.js';
 import { PHASES } from '../../lib/protocol.js';
 import Scoreboard from '../../components/Scoreboard.js';
 import TvRound from '../../components/tv/TvRound.js';
+import Timer from '../../components/Timer.js';
 
 export default function TvPage() {
   const { connected, joined, state, joinTv, error } = useGameSocket();
@@ -46,6 +47,7 @@ export default function TvPage() {
     <main style={{ minHeight: '100vh', padding: '4vh 4vw', display: 'flex', flexDirection: 'column' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1 style={{ fontSize: '2.4vw', margin: 0 }}>{state?.quizTitle ?? 'Trivia Run'}</h1>
+        {state?.timer && <Timer endsAt={state.timer.endsAt} big />}
         <div style={{ textAlign: 'right' }}>
           <div className="muted" style={{ fontSize: '1.1vw' }}>Join code</div>
           <div className="roomcode" style={{ fontSize: '3.4vw', color: 'var(--accent)', lineHeight: 1 }}>{joined.roomCode}</div>

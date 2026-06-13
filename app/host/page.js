@@ -4,6 +4,7 @@ import { useGameSocket } from '../../lib/useGameSocket.js';
 import { ACTIONS, PHASES } from '../../lib/protocol.js';
 import ConnDot from '../../components/ConnDot.js';
 import HostRoundControls from '../../components/host/HostRoundControls.js';
+import TimerControls from '../../components/host/TimerControls.js';
 
 export default function HostPage() {
   const sock = useGameSocket();
@@ -119,6 +120,9 @@ export default function HostPage() {
                 </button>
               ))}
               <button onClick={() => action(ACTIONS.FINISH)} style={{ marginLeft: 'auto' }}>🏁 Final standings</button>
+            </div>
+            <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
+              <TimerControls timer={state?.timer} action={action} disabled={phase !== PHASES.IN_ROUND} />
             </div>
           </div>
 

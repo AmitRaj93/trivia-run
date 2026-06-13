@@ -6,6 +6,7 @@ import { ROLES } from '../../lib/protocol.js';
 import RepRound from '../../components/play/RepRound.js';
 import Scoreboard from '../../components/Scoreboard.js';
 import ConnDot from '../../components/ConnDot.js';
+import Timer from '../../components/Timer.js';
 
 export default function PlayPage() {
   const { connected, joined, state, requestTeam, joinViewer, answer, error, rejected } = useGameSocket();
@@ -73,6 +74,7 @@ export default function PlayPage() {
             <div className="pill">Viewing · Room {joined.roomCode}</div>
             <ConnDot on={connected} />
           </div>
+          {state?.timer && <div style={{ textAlign: 'center', margin: '12px 0' }}><Timer endsAt={state.timer.endsAt} /></div>}
           {state?.round?.prompt && <h2 style={{ marginBottom: 4 }}>{state.round.prompt}</h2>}
           <div style={{ marginTop: 16 }}><Scoreboard teams={state?.teams ?? []} /></div>
         </div>
@@ -88,6 +90,7 @@ export default function PlayPage() {
           <span className="pill">Room {joined.roomCode}</span>
           <span className="muted" style={{ fontSize: 13 }}><ConnDot on={connected} /> {connected ? 'live' : 'reconnecting…'}</span>
         </div>
+        {state?.timer && <div style={{ textAlign: 'center', marginBottom: 12 }}><Timer endsAt={state.timer.endsAt} /></div>}
         <RepRound state={state} myTeamId={joined.teamId} answer={answer} />
       </div>
     </main>

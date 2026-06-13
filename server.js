@@ -14,6 +14,7 @@ const app = next({ dev });
 const handle = app.getRequestHandler();
 
 const roomClients = new Map(); // roomCode -> Set<ws>
+const roomTimers = new Map(); // roomCode -> setTimeout handle
 
 function addClientToRoom(code, ws) {
   if (!roomClients.has(code)) roomClients.set(code, new Set());
@@ -80,6 +81,27 @@ function handleAction(ws, msg) {
       target.pendingReqId = null;
       send(target, S2C.REJECTED, {});
     }
+    return broadcastState(game);
+  }
+
+  // The countdown timer needs a real timer + a broadcast on expiry, so it's
+  // driven here rather than inside the pure game model.
+  if (msg.action === ACTIONS.START_TIMER) {
+    clearTimeout(roomTimers.get(game.roomCode));
+    const t = game.startTimer(msg.payload?.seconds);
+    roomTimers.set(
+      game.roomCode,
+      setTimeout(() => {
+        roomTimers.delete(game.roomCode);
+        if (game.expireTimer(t.id)) broadcastState(game);
+      }, t.durationSec * 1000)
+    );
+    return broadcastState(game);
+  }
+  if (msg.action === ACTIONS.STOP_TIMER) {
+    clearTimeout(roomTimers.get(game.roomCode));
+    roomTimers.delete(game.roomCode);
+    game.stopTimer();
     return broadcastState(game);
   }
 

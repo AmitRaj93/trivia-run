@@ -71,6 +71,21 @@ your real clips in `public/media/music/`). Restart the server after editing.
 4. Use the console to start the quiz, move between rounds/questions, open/close
    answers, arm the buzzer, reveal, and grade.
 
+## Local testing with several teams
+
+Each team is one device. The rep token is kept in **sessionStorage** (per-tab), so
+to play multiple teams on one computer, open `/play` in a **separate tab or window**
+per team (a normal tab and an incognito/private window also work). Same-tab reloads
+keep you in your team; a fresh tab is a fresh team.
+
+## Timer
+
+The console has a countdown (preset 30/45/60/90s or a custom value). Start it and
+it shows in sync on the console, the TV, and every player's phone. When it hits
+zero the server **auto-closes answers** for submission rounds; the host can also
+**Stop** it early (which cancels the countdown without closing answers). Changing
+question or round clears a running timer.
+
 ## Architecture
 
 - **`server.js`** — Next.js handler + `ws` server on `/ws`; admission + role-aware broadcast.
