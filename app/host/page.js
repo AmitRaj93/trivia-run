@@ -5,6 +5,7 @@ import { ACTIONS, PHASES } from '../../lib/protocol.js';
 import ConnDot from '../../components/ConnDot.js';
 import HostRoundControls from '../../components/host/HostRoundControls.js';
 import TimerControls from '../../components/host/TimerControls.js';
+import QRJoin from '../../components/QRJoin.js';
 
 export default function HostPage() {
   const sock = useGameSocket();
@@ -57,6 +58,11 @@ export default function HostPage() {
       <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 20, alignItems: 'start' }}>
         {/* left: teams + admission */}
         <aside style={{ display: 'grid', gap: 16 }}>
+          <section className="panel" style={{ padding: 16, textAlign: 'center' }}>
+            <h3 style={{ margin: '0 0 10px' }}>Scan to join</h3>
+            <QRJoin roomCode={joined.roomCode} size={150} />
+          </section>
+
           {pending.length > 0 && (
             <section className="panel" style={{ padding: 16, borderColor: 'var(--warn)' }}>
               <h3 style={{ margin: '0 0 10px' }}>Join requests ({pending.length})</h3>

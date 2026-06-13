@@ -38,8 +38,16 @@ export default function RepRound({ state, myTeamId, answer }) {
 }
 
 function QuadsRep({ round, myTeamId }) {
-  const isMyDirect = round.directTeamId === myTeamId;
-  const onPass = round.status === 'passing';
+  const isMyDirect = round.status === 'asking' && round.directTeamId === myTeamId;
+  const isMyPass = round.status === 'passing' && round.passTeamId === myTeamId;
+  const highlight = isMyDirect || isMyPass;
+
+  let label;
+  if (isMyDirect) label = '🎯 YOUR DIRECT — answer out loud!';
+  else if (isMyPass) label = '↪ PASS TO YOU — answer out loud!';
+  else if (round.status === 'passing') label = 'On the pass to another team…';
+  else label = 'Listen to the quizmaster';
+
   return (
     <div style={{ textAlign: 'center' }}>
       <div
@@ -48,12 +56,12 @@ function QuadsRep({ round, myTeamId }) {
           borderRadius: 14,
           fontSize: 22,
           fontWeight: 800,
-          background: isMyDirect ? 'linear-gradient(135deg, var(--accent), var(--accent-2))' : 'var(--panel)',
-          color: isMyDirect ? '#0b1020' : 'var(--text)',
+          background: highlight ? 'linear-gradient(135deg, var(--accent), var(--accent-2))' : 'var(--panel)',
+          color: highlight ? '#0b1020' : 'var(--text)',
           border: '1px solid var(--border)',
         }}
       >
-        {isMyDirect ? '🎯 YOUR DIRECT — answer out loud!' : onPass ? '↪ On the pass — anyone can answer!' : 'Listen to the quizmaster'}
+        {label}
       </div>
       <p className="muted" style={{ marginTop: 12 }}>{round.prompt}</p>
     </div>

@@ -44,7 +44,9 @@ export default function TvRound({ state }) {
             border: '1px solid var(--border)',
           }}
         >
-          {round.status === 'passing' ? '↪ ON THE PASS — open to all' : `Direct: ${nameOf(round.directTeamId)}`}
+          {round.status === 'passing'
+            ? `↪ PASS to ${nameOf(round.passTeamId)} (${round.passNumber}/${round.passTotal})`
+            : `Direct: ${nameOf(round.directTeamId)}`}
         </div>
       )}
 

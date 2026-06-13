@@ -6,6 +6,7 @@ import { PHASES } from '../../lib/protocol.js';
 import Scoreboard from '../../components/Scoreboard.js';
 import TvRound from '../../components/tv/TvRound.js';
 import Timer from '../../components/Timer.js';
+import QRJoin from '../../components/QRJoin.js';
 
 export default function TvPage() {
   const { connected, joined, state, joinTv, error } = useGameSocket();
@@ -74,7 +75,11 @@ function Lobby({ code, teams, maxTeams }) {
     <div style={{ textAlign: 'center', width: '100%', maxWidth: 1000 }}>
       <div style={{ fontSize: '2vw', marginBottom: 6 }}>Teams, join now</div>
       <div className="muted" style={{ fontSize: '1.3vw' }}>
-        On your phone open the <b>Player</b> page and enter code <b className="roomcode">{code}</b>
+        Scan the code with your phone’s camera, or open <b>/play</b> and enter code{' '}
+        <b className="roomcode">{code}</b>
+      </div>
+      <div style={{ marginTop: 18 }}>
+        <QRJoin roomCode={code} size={220} />
       </div>
       <div
         style={{

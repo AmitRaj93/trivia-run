@@ -179,14 +179,18 @@ function QuadsBody({ round, teams, nameOf, action }) {
 
       {round.status === 'passing' && (
         <div style={{ marginTop: 14, padding: 12, border: '1px dashed var(--warn)', borderRadius: 10 }}>
-          <div className="muted" style={{ marginBottom: 8 }}>Passed — who got it?</div>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {teams.map((t) => (
-              <button key={t.id} onClick={() => action(ACTIONS.QUADS_AWARD_PASS, { teamId: t.id })}>
-                {t.name}
-              </button>
-            ))}
-            <button className="ghost" onClick={() => action(ACTIONS.QUADS_PASS_NONE)}>No one</button>
+          <div className="muted" style={{ marginBottom: 8 }}>
+            On the pass — team {round.passNumber} of {round.passTotal} (round-robin from the direct)
+          </div>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+            <b style={{ fontSize: 20, color: 'var(--warn)' }}>{nameOf(round.passTeamId)}</b>
+            <button className="primary" onClick={() => action(ACTIONS.QUADS_MARK_PASS, { correct: true })}>
+              ✓ Got it (+pass)
+            </button>
+            <button className="danger" onClick={() => action(ACTIONS.QUADS_MARK_PASS, { correct: false })}>
+              ✗ Wrong → next team
+            </button>
+            <button className="ghost" onClick={() => action(ACTIONS.QUADS_PASS_NONE)}>End pass</button>
           </div>
         </div>
       )}

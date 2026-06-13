@@ -46,7 +46,7 @@ All five rounds are implemented. Scoring lives in `content/quiz.json` →
 
 | # | Round | How it runs | Default points |
 | - | ----- | ----------- | -------------- |
-| 1 | **Quads** | 3 sets × 12 questions. Each set rotates a *direct* to every team 3×. Answered aloud; quizmaster marks correct / wrong → *pass*. | direct 10, pass 5 |
+| 1 | **Quads** | 3 sets × 12 questions. Each set rotates a *direct* to every team 3×. Answered aloud; quizmaster marks correct / wrong. A missed direct passes **round-robin starting from the team after the direct**; the pass timer auto-resets to **half the direct timer** for each team in turn. | direct 10, pass 5 |
 | 2 | **Match the Following** | 6 numbered items ↔ 6 lettered options. Reps submit a number→letter map; **auto-graded** per pair. | 5 / pair |
 | 3 | **Jet Setters** | 8 questions; every team types an answer. Host opens/closes, then marks each. | 10 |
 | 4 | **Invisibles** | Image on the TV; teams type what they see. Host marks each. | 10 |
@@ -66,8 +66,8 @@ your real clips in `public/media/music/`). Restart the server after editing.
 
 1. Quizmaster opens `/host`, clicks **Start new game**, notes the room code.
 2. Put `/tv?room=CODE` on the big screen.
-3. Each team rep opens `/play`, enters a team name + the code, taps **Request to
-   join**; the quizmaster approves them.
+3. Each team rep opens `/play` (or **scans the QR** shown on the TV / console),
+   enters a team name, taps **Request to join**; the quizmaster approves them.
 4. Use the console to start the quiz, move between rounds/questions, open/close
    answers, arm the buzzer, reveal, and grade.
 
@@ -86,9 +86,18 @@ zero the server **auto-closes answers** for submission rounds; the host can also
 **Stop** it early (which cancels the countdown without closing answers). Changing
 question or round clears a running timer.
 
+## Crash recovery
+
+All rooms (teams, scores, phase, round position, timer) are continuously snapshotted
+to `.data/state.json` (debounced, atomic write). On startup the server reloads them,
+so if the process crashes mid-event you just restart it — teams' phones reconnect
+automatically (their token is restored) and the quiz resumes where it left off.
+Question content is **not** persisted; it's always re-read from `content/quiz.json`.
+
 ## Architecture
 
-- **`server.js`** — Next.js handler + `ws` server on `/ws`; admission + role-aware broadcast.
+- **`server.js`** — Next.js handler + `ws` server on `/ws`; admission + role-aware broadcast + timer scheduling + persistence.
+- **`lib/persistence.js`** — debounced atomic snapshot of all rooms to `.data/state.json`, restored on boot.
 - **`lib/game.js`** — authoritative in-memory state, one `Game` per room.
 - **`lib/rounds/*`** — one module per round type (`init` / `count` / `onSeek` / `hostAction` / `answer` / `publicState`), registered in `lib/rounds/index.js`.
 - **`lib/content.js`** — loads/validates `content/quiz.json`.

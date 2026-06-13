@@ -5,8 +5,9 @@
 import { createServer } from 'http';
 import next from 'next';
 import { WebSocketServer } from 'ws';
-import { createRoom, getRoom } from './lib/game.js';
+import { createRoom, getRoom, serializeRooms, restoreRooms } from './lib/game.js';
 import { ROLES, C2S, S2C, ACTIONS } from './lib/protocol.js';
+import { scheduleSave, loadState } from './lib/persistence.js';
 
 const dev = process.env.NODE_ENV !== 'production';
 const port = Number(process.env.PORT) || 3000;
@@ -30,17 +31,42 @@ function send(ws, type, data = {}) {
   if (ws.readyState === ws.OPEN) ws.send(JSON.stringify({ type, ...data }));
 }
 
+// Keep the server's expiry setTimeout in step with whatever the game's timer is
+// now (started, stopped, replaced by a pass timer, cleared on navigation, …).
+function reconcileTimer(game) {
+  const cur = roomTimers.get(game.roomCode);
+  if (!game.timer) {
+    if (cur) {
+      clearTimeout(cur.handle);
+      roomTimers.delete(game.roomCode);
+    }
+    return;
+  }
+  if (cur && cur.id === game.timer.id) return; // already scheduled
+  if (cur) clearTimeout(cur.handle);
+  const id = game.timer.id;
+  const delay = Math.max(0, game.timer.endsAt - Date.now());
+  const handle = setTimeout(() => {
+    roomTimers.delete(game.roomCode);
+    if (game.expireTimer(id)) broadcastState(game);
+  }, delay);
+  roomTimers.set(game.roomCode, { id, handle });
+}
+
 // One snapshot per role, computed lazily, sent to every client in the room.
 function broadcastState(game) {
   const set = roomClients.get(game.roomCode);
-  if (!set) return;
-  const byRole = {};
-  for (const ws of set) {
-    if (ws.readyState !== ws.OPEN) continue;
-    const role = ws.role || ROLES.VIEWER;
-    if (!byRole[role]) byRole[role] = JSON.stringify({ type: S2C.STATE, state: game.snapshot(role) });
-    ws.send(byRole[role]);
+  if (set) {
+    const byRole = {};
+    for (const ws of set) {
+      if (ws.readyState !== ws.OPEN) continue;
+      const role = ws.role || ROLES.VIEWER;
+      if (!byRole[role]) byRole[role] = JSON.stringify({ type: S2C.STATE, state: game.snapshot(role) });
+      ws.send(byRole[role]);
+    }
   }
+  reconcileTimer(game);
+  scheduleSave(serializeRooms);
 }
 
 function findWs(code, predicate) {
@@ -81,27 +107,6 @@ function handleAction(ws, msg) {
       target.pendingReqId = null;
       send(target, S2C.REJECTED, {});
     }
-    return broadcastState(game);
-  }
-
-  // The countdown timer needs a real timer + a broadcast on expiry, so it's
-  // driven here rather than inside the pure game model.
-  if (msg.action === ACTIONS.START_TIMER) {
-    clearTimeout(roomTimers.get(game.roomCode));
-    const t = game.startTimer(msg.payload?.seconds);
-    roomTimers.set(
-      game.roomCode,
-      setTimeout(() => {
-        roomTimers.delete(game.roomCode);
-        if (game.expireTimer(t.id)) broadcastState(game);
-      }, t.durationSec * 1000)
-    );
-    return broadcastState(game);
-  }
-  if (msg.action === ACTIONS.STOP_TIMER) {
-    clearTimeout(roomTimers.get(game.roomCode));
-    roomTimers.delete(game.roomCode);
-    game.stopTimer();
     return broadcastState(game);
   }
 
@@ -181,7 +186,17 @@ function handleMessage(ws, raw) {
   }
 }
 
-app.prepare().then(() => {
+app.prepare().then(async () => {
+  // Restore any rooms from a previous run (crash recovery) and re-arm their timers.
+  const saved = await loadState();
+  if (saved) {
+    const restored = restoreRooms(saved);
+    if (restored.length) {
+      console.log(`> restored ${restored.length} room(s) from disk: ${restored.map((g) => g.roomCode).join(', ')}`);
+      for (const game of restored) reconcileTimer(game);
+    }
+  }
+
   const server = createServer((req, res) => handle(req, res));
   const wss = new WebSocketServer({ server, path: '/ws' });
 
