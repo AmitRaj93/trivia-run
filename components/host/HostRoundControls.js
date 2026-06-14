@@ -23,6 +23,21 @@ export default function HostRoundControls({ state, action }) {
     );
   }
 
+  // Round title card stage: the TV/players show the title; host presses Begin.
+  if (state?.roundIntro) {
+    const meta = state?.rounds?.[state?.roundIndex];
+    return (
+      <div className="panel" style={{ padding: 20, textAlign: 'center' }}>
+        <div className="pill">Title screen showing on TV</div>
+        <h2 style={{ margin: '12px 0 4px' }}>{meta?.title}</h2>
+        {meta?.subtitle && <p className="muted" style={{ marginTop: 0 }}>{meta.subtitle}</p>}
+        <button className="primary" style={{ fontSize: 18, marginTop: 10 }} onClick={() => action(ACTIONS.BEGIN_ROUND)}>
+          ▶ Begin round
+        </button>
+      </div>
+    );
+  }
+
   const teams = state?.teams ?? [];
   const nameOf = (id) => teams.find((t) => t.id === id)?.name ?? '—';
 
@@ -31,12 +46,26 @@ export default function HostRoundControls({ state, action }) {
       <NavBar state={state} action={action} />
 
       {round.media && (
-        <div className="muted" style={{ fontSize: 13, marginTop: 10 }}>media: {round.media}</div>
+        <img
+          src={round.media}
+          alt=""
+          style={{ maxHeight: 150, maxWidth: '100%', borderRadius: 8, border: '1px solid var(--border)', marginTop: 10, display: 'block' }}
+        />
       )}
       <div style={{ fontSize: 22, fontWeight: 700, margin: '14px 0' }}>{round.prompt || '—'}</div>
       <div style={{ background: 'var(--panel-2)', border: '1px solid var(--border)', borderRadius: 10, padding: '10px 14px' }}>
         <span className="muted">Answer: </span>
         <b style={{ color: 'var(--good)' }}>{round.answer ?? '••• (revealed only on TV after you press Reveal)'}</b>
+        {round.answerImage && (
+          <div style={{ marginTop: 8 }}>
+            <img
+              src={round.answerImage}
+              alt=""
+              style={{ maxHeight: 120, maxWidth: '100%', borderRadius: 8, border: '1px solid var(--border)', display: 'block' }}
+            />
+            <span className="muted" style={{ fontSize: 12 }}>answer image — appears on the TV when you Reveal</span>
+          </div>
+        )}
       </div>
 
       {round.kind === 'quads' && <QuadsBody round={round} teams={teams} nameOf={nameOf} action={action} />}

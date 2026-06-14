@@ -7,6 +7,7 @@ import Scoreboard from '../../components/Scoreboard.js';
 import TvRound from '../../components/tv/TvRound.js';
 import Timer from '../../components/Timer.js';
 import QRJoin from '../../components/QRJoin.js';
+import RoundIntro from '../../components/RoundIntro.js';
 
 export default function TvPage() {
   const { connected, joined, state, joinTv, error } = useGameSocket();
@@ -57,7 +58,12 @@ export default function TvPage() {
 
       <section style={{ flex: 1, display: 'grid', placeItems: 'center', padding: '3vh 0' }}>
         {phase === PHASES.LOBBY && <Lobby code={joined.roomCode} teams={teams} maxTeams={state?.config?.maxTeams ?? 4} />}
-        {phase === PHASES.IN_ROUND && <TvRound state={state} />}
+        {phase === PHASES.IN_ROUND &&
+          (state?.roundIntro ? (
+            <RoundIntro round={state?.rounds?.[state?.roundIndex]} index={state?.roundIndex} total={state?.rounds?.length} big />
+          ) : (
+            <TvRound state={state} />
+          ))}
         {phase === PHASES.FINISHED && <Podium teams={teams} />}
       </section>
 

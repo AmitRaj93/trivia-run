@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useGameSocket } from '../../lib/useGameSocket.js';
 import { ACTIONS, PHASES } from '../../lib/protocol.js';
 import ConnDot from '../../components/ConnDot.js';
@@ -10,8 +11,19 @@ import QRJoin from '../../components/QRJoin.js';
 export default function HostPage() {
   const sock = useGameSocket();
   const { connected, joined, state, create, action, error } = sock;
+  const [passcodeRequired, setPasscodeRequired] = useState(false);
+  const [passcode, setPasscode] = useState('');
+
+  // Ask the server whether a host passcode is configured (so we only prompt when needed).
+  useEffect(() => {
+    fetch('/api/config')
+      .then((r) => r.json())
+      .then((c) => setPasscodeRequired(!!c.hostPasscodeRequired))
+      .catch(() => {});
+  }, []);
 
   if (!joined) {
+    const canStart = connected && (!passcodeRequired || passcode.length > 0);
     return (
       <main className="center-screen">
         <div className="panel" style={{ padding: 36, maxWidth: 480, width: '100%', textAlign: 'center' }}>
@@ -21,7 +33,23 @@ export default function HostPage() {
             Opens a room with a 4-letter code. Put the TV display on the big screen; team reps join
             from their phones and you approve them here.
           </p>
-          <button className="primary" style={{ fontSize: 18, width: '100%' }} disabled={!connected} onClick={create}>
+          {passcodeRequired && (
+            <input
+              type="password"
+              value={passcode}
+              onChange={(e) => setPasscode(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && canStart && create(passcode)}
+              placeholder="Host passcode"
+              autoFocus
+              style={{ width: '100%', marginBottom: 14, textAlign: 'center' }}
+            />
+          )}
+          <button
+            className="primary"
+            style={{ fontSize: 18, width: '100%' }}
+            disabled={!canStart}
+            onClick={() => create(passcode)}
+          >
             {connected ? 'Start new game' : 'Connecting…'}
           </button>
           {error && <p style={{ color: 'var(--bad)' }}>{error}</p>}

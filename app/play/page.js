@@ -7,6 +7,7 @@ import RepRound from '../../components/play/RepRound.js';
 import Scoreboard from '../../components/Scoreboard.js';
 import ConnDot from '../../components/ConnDot.js';
 import Timer from '../../components/Timer.js';
+import RoundIntro from '../../components/RoundIntro.js';
 
 export default function PlayPage() {
   const { connected, joined, state, requestTeam, joinViewer, answer, error, rejected } = useGameSocket();
@@ -75,7 +76,13 @@ export default function PlayPage() {
             <ConnDot on={connected} />
           </div>
           {state?.timer && <div style={{ textAlign: 'center', margin: '12px 0' }}><Timer endsAt={state.timer.endsAt} /></div>}
-          {state?.round?.prompt && <h2 style={{ marginBottom: 4 }}>{state.round.prompt}</h2>}
+          {state?.roundIntro ? (
+            <div style={{ margin: '12px 0' }}>
+              <RoundIntro round={state?.rounds?.[state?.roundIndex]} index={state?.roundIndex} total={state?.rounds?.length} />
+            </div>
+          ) : (
+            state?.round?.prompt && <h2 style={{ marginBottom: 4 }}>{state.round.prompt}</h2>
+          )}
           <div style={{ marginTop: 16 }}><Scoreboard teams={state?.teams ?? []} /></div>
         </div>
       </main>

@@ -16,53 +16,163 @@
       "sets": [
         {
           "questions": [
-            { "q": "Which planet is known as the Red Planet?", "a": "Mars" },
-            { "q": "What is the chemical symbol for gold?", "a": "Au" },
-            { "q": "Who painted the Mona Lisa?", "a": "Leonardo da Vinci" },
-            { "q": "What is the largest ocean on Earth?", "a": "Pacific Ocean" },
-            { "q": "In which year did the Second World War end?", "a": "1945" },
-            { "q": "What is the capital of Australia?", "a": "Canberra" },
-            { "q": "How many strings does a standard violin have?", "a": "Four" },
-            { "q": "Which gas do plants primarily absorb for photosynthesis?", "a": "Carbon dioxide" },
-            { "q": "Who wrote the play 'Romeo and Juliet'?", "a": "William Shakespeare" },
-            { "q": "What is the hardest known natural material?", "a": "Diamond" },
-            { "q": "Which country gifted the Statue of Liberty to the USA?", "a": "France" },
-            { "q": "What is the square root of 144?", "a": "12" }
+            {
+              "q": "Which planet is known as the Red Planet?",
+              "a": "Mars",
+              "answerImage": "https://picsum.photos/seed/ans-mars/900/600"
+            },
+            {
+              "q": "What is the chemical symbol for gold?",
+              "a": "Au"
+            },
+            {
+              "q": "Who painted the Mona Lisa?",
+              "a": "Leonardo da Vinci"
+            },
+            {
+              "q": "What is the largest ocean on Earth?",
+              "a": "Pacific Ocean"
+            },
+            {
+              "q": "In which year did the Second World War end?",
+              "a": "1945"
+            },
+            {
+              "q": "What is the capital of Australia?",
+              "a": "Canberra"
+            },
+            {
+              "q": "How many strings does a standard violin have?",
+              "a": "Four"
+            },
+            {
+              "q": "Which gas do plants primarily absorb for photosynthesis?",
+              "a": "Carbon dioxide"
+            },
+            {
+              "q": "Who wrote the play 'Romeo and Juliet'?",
+              "a": "William Shakespeare"
+            },
+            {
+              "q": "What is the hardest known natural material?",
+              "a": "Diamond"
+            },
+            {
+              "q": "Which country gifted the Statue of Liberty to the USA?",
+              "a": "France"
+            },
+            {
+              "q": "What is the square root of 144?",
+              "a": "12"
+            }
           ]
         },
         {
           "questions": [
-            { "q": "Which element has the atomic number 1?", "a": "Hydrogen" },
-            { "q": "What is the longest river in the world?", "a": "The Nile (or Amazon, debated)" },
-            { "q": "Who developed the theory of general relativity?", "a": "Albert Einstein" },
-            { "q": "What is the smallest prime number?", "a": "2" },
-            { "q": "In which city is the Eiffel Tower located?", "a": "Paris" },
-            { "q": "What is the national language of Brazil?", "a": "Portuguese" },
-            { "q": "Which organ pumps blood through the body?", "a": "The heart" },
-            { "q": "How many continents are there?", "a": "Seven" },
-            { "q": "Who is known as the 'Father of Computers'?", "a": "Charles Babbage" },
-            { "q": "What is the freezing point of water in Celsius?", "a": "0 degrees" },
-            { "q": "Which planet has the most moons?", "a": "Saturn" },
-            { "q": "What currency is used in Japan?", "a": "Yen" }
+            {
+              "q": "Which element has the atomic number 1?",
+              "a": "Hydrogen"
+            },
+            {
+              "q": "What is the longest river in the world?",
+              "a": "The Nile (or Amazon, debated)"
+            },
+            {
+              "q": "Who developed the theory of general relativity?",
+              "a": "Albert Einstein"
+            },
+            {
+              "q": "What is the smallest prime number?",
+              "a": "2"
+            },
+            {
+              "q": "In which city is the Eiffel Tower located?",
+              "a": "Paris"
+            },
+            {
+              "q": "What is the national language of Brazil?",
+              "a": "Portuguese"
+            },
+            {
+              "q": "Which organ pumps blood through the body?",
+              "a": "The heart"
+            },
+            {
+              "q": "How many continents are there?",
+              "a": "Seven"
+            },
+            {
+              "q": "Who is known as the 'Father of Computers'?",
+              "a": "Charles Babbage"
+            },
+            {
+              "q": "What is the freezing point of water in Celsius?",
+              "a": "0 degrees"
+            },
+            {
+              "q": "Which planet has the most moons?",
+              "a": "Saturn"
+            },
+            {
+              "q": "What currency is used in Japan?",
+              "a": "Yen"
+            }
           ]
         },
         {
           "questions": [
-            { "q": "What is the tallest mountain above sea level?", "a": "Mount Everest" },
-            { "q": "Which sport uses the terms 'love' and 'deuce'?", "a": "Tennis" },
-            { "q": "Who wrote 'A Brief History of Time'?", "a": "Stephen Hawking" },
-            { "q": "What is the powerhouse of the cell?", "a": "Mitochondria" },
-            { "q": "Which country has the largest population?", "a": "India" },
-            { "q": "What does 'HTTP' stand for?", "a": "HyperText Transfer Protocol" },
-            { "q": "How many sides does a hexagon have?", "a": "Six" },
-            { "q": "Which artist is famous for the album 'Thriller'?", "a": "Michael Jackson" },
-            { "q": "What is the chemical formula for table salt?", "a": "NaCl" },
-            { "q": "In Greek mythology, who is the king of the gods?", "a": "Zeus" },
-            { "q": "What is the largest planet in our solar system?", "a": "Jupiter" },
-            { "q": "Which year did humans first land on the Moon?", "a": "1969" }
+            {
+              "q": "What is the tallest mountain above sea level?",
+              "a": "Mount Everest"
+            },
+            {
+              "q": "Which sport uses the terms 'love' and 'deuce'?",
+              "a": "Tennis"
+            },
+            {
+              "q": "Who wrote 'A Brief History of Time'?",
+              "a": "Stephen Hawking"
+            },
+            {
+              "q": "What is the powerhouse of the cell?",
+              "a": "Mitochondria"
+            },
+            {
+              "q": "Which country has the largest population?",
+              "a": "India"
+            },
+            {
+              "q": "What does 'HTTP' stand for?",
+              "a": "HyperText Transfer Protocol"
+            },
+            {
+              "q": "How many sides does a hexagon have?",
+              "a": "Six"
+            },
+            {
+              "q": "Which artist is famous for the album 'Thriller'?",
+              "a": "Michael Jackson"
+            },
+            {
+              "q": "What is the chemical formula for table salt?",
+              "a": "NaCl"
+            },
+            {
+              "q": "In Greek mythology, who is the king of the gods?",
+              "a": "Zeus"
+            },
+            {
+              "q": "What is the largest planet in our solar system?",
+              "a": "Jupiter"
+            },
+            {
+              "q": "Which year did humans first land on the Moon?",
+              "a": "1969"
+            }
           ]
         }
-      ]
+      ],
+      "subtitle": "Three sets of direct questions — miss yours and it passes to the next team."
     },
     {
       "type": "match",
@@ -70,67 +180,227 @@
       "questions": [
         {
           "prompt": "Match each country to its capital city.",
-          "left": ["Japan", "Egypt", "Canada", "Norway", "Kenya", "Peru"],
-          "right": ["Oslo", "Lima", "Tokyo", "Nairobi", "Ottawa", "Cairo"],
-          "answer": { "1": "C", "2": "F", "3": "E", "4": "A", "5": "D", "6": "B" }
+          "left": [
+            "Japan",
+            "Egypt",
+            "Canada",
+            "Norway",
+            "Kenya",
+            "Peru"
+          ],
+          "right": [
+            "Oslo",
+            "Lima",
+            "Tokyo",
+            "Nairobi",
+            "Ottawa",
+            "Cairo"
+          ],
+          "answer": {
+            "1": "C",
+            "2": "F",
+            "3": "E",
+            "4": "A",
+            "5": "D",
+            "6": "B"
+          }
         },
         {
           "prompt": "Match each author to their novel.",
-          "left": ["Orwell", "Austen", "Tolkien", "Shelley", "Dickens", "Stoker"],
-          "right": ["Frankenstein", "1984", "Dracula", "Pride and Prejudice", "The Hobbit", "Oliver Twist"],
-          "answer": { "1": "B", "2": "D", "3": "E", "4": "A", "5": "F", "6": "C" }
+          "left": [
+            "Orwell",
+            "Austen",
+            "Tolkien",
+            "Shelley",
+            "Dickens",
+            "Stoker"
+          ],
+          "right": [
+            "Frankenstein",
+            "1984",
+            "Dracula",
+            "Pride and Prejudice",
+            "The Hobbit",
+            "Oliver Twist"
+          ],
+          "answer": {
+            "1": "B",
+            "2": "D",
+            "3": "E",
+            "4": "A",
+            "5": "F",
+            "6": "C"
+          }
         },
         {
           "prompt": "Match each element to its symbol.",
-          "left": ["Iron", "Potassium", "Sodium", "Lead", "Tin", "Silver"],
-          "right": ["Na", "Pb", "Fe", "Ag", "K", "Sn"],
-          "answer": { "1": "C", "2": "E", "3": "A", "4": "B", "5": "F", "6": "D" }
+          "left": [
+            "Iron",
+            "Potassium",
+            "Sodium",
+            "Lead",
+            "Tin",
+            "Silver"
+          ],
+          "right": [
+            "Na",
+            "Pb",
+            "Fe",
+            "Ag",
+            "K",
+            "Sn"
+          ],
+          "answer": {
+            "1": "C",
+            "2": "E",
+            "3": "A",
+            "4": "B",
+            "5": "F",
+            "6": "D"
+          }
         },
         {
           "prompt": "Match each inventor to their invention.",
-          "left": ["Bell", "Edison", "Wright Bros", "Tesla", "Berners-Lee", "Gutenberg"],
-          "right": ["Light bulb", "Telephone", "World Wide Web", "Printing press", "Aeroplane", "AC motor"],
-          "answer": { "1": "B", "2": "A", "3": "E", "4": "F", "5": "C", "6": "D" }
+          "left": [
+            "Bell",
+            "Edison",
+            "Wright Bros",
+            "Tesla",
+            "Berners-Lee",
+            "Gutenberg"
+          ],
+          "right": [
+            "Light bulb",
+            "Telephone",
+            "World Wide Web",
+            "Printing press",
+            "Aeroplane",
+            "AC motor"
+          ],
+          "answer": {
+            "1": "B",
+            "2": "A",
+            "3": "E",
+            "4": "F",
+            "5": "C",
+            "6": "D"
+          }
         }
-      ]
+      ],
+      "subtitle": "Match each numbered item to its lettered pair on your phone."
     },
     {
       "type": "jetsetters",
       "title": "Round 3 — Jet Setters",
       "questions": [
-        { "q": "This city, built on more than 100 islands, has no roads — only canals. Name it.", "a": "Venice" },
-        { "q": "Which airport has the IATA code LHR?", "a": "London Heathrow" },
-        { "q": "The Burj Khalifa, the world's tallest building, is in which city?", "a": "Dubai" },
-        { "q": "Machu Picchu is a 15th-century Inca citadel in which country?", "a": "Peru" },
-        { "q": "Which country would you visit to see the original Angkor Wat?", "a": "Cambodia" },
-        { "q": "The Trans-Siberian Railway connects Moscow to which eastern port city?", "a": "Vladivostok" },
-        { "q": "Which desert would you cross travelling overland from Morocco toward Mali?", "a": "The Sahara" },
-        { "q": "Santorini is part of which country's island groups?", "a": "Greece" }
-      ]
+        {
+          "q": "This city, built on more than 100 islands, has no roads — only canals. Name it.",
+          "a": "Venice",
+          "image": "https://picsum.photos/seed/jet-venice/1000/600",
+          "answerImage": "https://picsum.photos/seed/ans-venice/900/600"
+        },
+        {
+          "q": "Which airport has the IATA code LHR?",
+          "a": "London Heathrow"
+        },
+        {
+          "q": "The Burj Khalifa, the world's tallest building, is in which city?",
+          "a": "Dubai",
+          "image": "https://picsum.photos/seed/jet-burj/1000/600"
+        },
+        {
+          "q": "Machu Picchu is a 15th-century Inca citadel in which country?",
+          "a": "Peru",
+          "image": "https://picsum.photos/seed/jet-machu/1000/600"
+        },
+        {
+          "q": "Which country would you visit to see the original Angkor Wat?",
+          "a": "Cambodia"
+        },
+        {
+          "q": "The Trans-Siberian Railway connects Moscow to which eastern port city?",
+          "a": "Vladivostok"
+        },
+        {
+          "q": "Which desert would you cross travelling overland from Morocco toward Mali?",
+          "a": "The Sahara"
+        },
+        {
+          "q": "Santorini is part of which country's island groups?",
+          "a": "Greece",
+          "image": "https://picsum.photos/seed/jet-santorini/1000/600"
+        }
+      ],
+      "subtitle": "Every team answers every question. Type it in before the timer runs out."
     },
     {
       "type": "invisibles",
       "title": "Round 4 — Invisibles",
       "questions": [
-        { "image": "https://picsum.photos/seed/inv1/900/600", "a": "Sample answer 1 (replace image)" },
-        { "image": "https://picsum.photos/seed/inv2/900/600", "a": "Sample answer 2 (replace image)" },
-        { "image": "https://picsum.photos/seed/inv3/900/600", "a": "Sample answer 3 (replace image)" },
-        { "image": "https://picsum.photos/seed/inv4/900/600", "a": "Sample answer 4 (replace image)" },
-        { "image": "https://picsum.photos/seed/inv5/900/600", "a": "Sample answer 5 (replace image)" },
-        { "image": "https://picsum.photos/seed/inv6/900/600", "a": "Sample answer 6 (replace image)" }
-      ]
+        {
+          "image": "https://picsum.photos/seed/inv1/900/600",
+          "a": "Sample answer 1 (replace image)",
+          "answerImage": "https://picsum.photos/seed/ans-inv1/900/600"
+        },
+        {
+          "image": "https://picsum.photos/seed/inv2/900/600",
+          "a": "Sample answer 2 (replace image)"
+        },
+        {
+          "image": "https://picsum.photos/seed/inv3/900/600",
+          "a": "Sample answer 3 (replace image)"
+        },
+        {
+          "image": "https://picsum.photos/seed/inv4/900/600",
+          "a": "Sample answer 4 (replace image)"
+        },
+        {
+          "image": "https://picsum.photos/seed/inv5/900/600",
+          "a": "Sample answer 5 (replace image)"
+        },
+        {
+          "image": "https://picsum.photos/seed/inv6/900/600",
+          "a": "Sample answer 6 (replace image)"
+        }
+      ],
+      "subtitle": "Identify what's on the screen."
     },
     {
       "type": "music",
       "title": "Round 5 — Music",
       "questions": [
-        { "audio": "/media/music/clip1.mp3", "q": "Name the song and the artist.", "a": "Sample Song 1 — Artist 1" },
-        { "audio": "/media/music/clip2.mp3", "q": "Name the song and the artist.", "a": "Sample Song 2 — Artist 2" },
-        { "audio": "/media/music/clip3.mp3", "q": "Name the film this score is from.", "a": "Sample Film 3" },
-        { "audio": "/media/music/clip4.mp3", "q": "Name the song and the artist.", "a": "Sample Song 4 — Artist 4" },
-        { "audio": "/media/music/clip5.mp3", "q": "Name the decade and the artist.", "a": "Sample Song 5 — Artist 5" },
-        { "audio": "/media/music/clip6.mp3", "q": "Name the song and the artist.", "a": "Sample Song 6 — Artist 6" }
-      ]
+        {
+          "audio": "/media/music/clip1.mp3",
+          "q": "Name the song and the artist.",
+          "a": "Sample Song 1 — Artist 1"
+        },
+        {
+          "audio": "/media/music/clip2.mp3",
+          "q": "Name the song and the artist.",
+          "a": "Sample Song 2 — Artist 2"
+        },
+        {
+          "audio": "/media/music/clip3.mp3",
+          "q": "Name the film this score is from.",
+          "a": "Sample Film 3"
+        },
+        {
+          "audio": "/media/music/clip4.mp3",
+          "q": "Name the song and the artist.",
+          "a": "Sample Song 4 — Artist 4"
+        },
+        {
+          "audio": "/media/music/clip5.mp3",
+          "q": "Name the decade and the artist.",
+          "a": "Sample Song 5 — Artist 5"
+        },
+        {
+          "audio": "/media/music/clip6.mp3",
+          "q": "Name the song and the artist.",
+          "a": "Sample Song 6 — Artist 6"
+        }
+      ],
+      "subtitle": "Buzz in fast — the first team to the buzzer gets to answer."
     }
   ]
 }

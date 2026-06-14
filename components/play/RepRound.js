@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { PHASES } from '../../lib/protocol.js';
+import RoundIntro from '../RoundIntro.js';
 
 // What a team's representative sees on their phone during play. Switches on
 // round.kind: quads is answered aloud; match/jetsetters/invisibles take input here.
@@ -12,6 +13,16 @@ export default function RepRound({ state, myTeamId, answer }) {
 
   if (phase === PHASES.LOBBY) return <Centered title="You're in!" sub="Waiting for the quizmaster to start. Watch the TV." me={me} />;
   if (phase === PHASES.FINISHED) return <Centered title="That's a wrap!" sub="Final standings are on the TV." me={me} />;
+  if (phase === PHASES.IN_ROUND && state?.roundIntro) {
+    return (
+      <div>
+        <TeamBadge me={me} />
+        <div style={{ marginTop: 20 }}>
+          <RoundIntro round={state?.rounds?.[state?.roundIndex]} index={state?.roundIndex} total={state?.rounds?.length} />
+        </div>
+      </div>
+    );
+  }
   if (!round) return <Centered title="Get ready…" me={me} />;
 
   const submitted = (round.submittedTeamIds || []).includes(myTeamId);
@@ -30,8 +41,13 @@ export default function RepRound({ state, myTeamId, answer }) {
           <p className="muted">{round.prompt}<br />This round is run by the quizmaster.</p>
         )}
       </div>
-      {round.revealed && round.answer && (
-        <p style={{ marginTop: 14, textAlign: 'center' }}>Answer: <b style={{ color: 'var(--good)' }}>{round.answer}</b></p>
+      {round.revealed && (round.answer || round.answerImage) && (
+        <div style={{ marginTop: 14, textAlign: 'center' }}>
+          {round.answerImage && (
+            <img src={round.answerImage} alt="" style={{ width: '100%', borderRadius: 10, marginBottom: 8, display: 'block' }} />
+          )}
+          {round.answer && <p style={{ margin: 0 }}>Answer: <b style={{ color: 'var(--good)' }}>{round.answer}</b></p>}
+        </div>
       )}
     </div>
   );
@@ -120,8 +136,12 @@ function TextRep({ round, submitted, answer }) {
   useEffect(() => setText(''), [round.qIndex]);
 
   if (!round.open && !submitted) return <Closed prompt={round.prompt} />;
+  const showImage = round.media && round.kind === 'jetsetters';
   return (
     <div>
+      {showImage && (
+        <img src={round.media} alt="" style={{ width: '100%', borderRadius: 10, marginBottom: 10, display: 'block' }} />
+      )}
       {round.media && round.kind === 'invisibles'
         ? <p className="muted">Look at the image on the TV and type your answer.</p>
         : <p style={{ fontWeight: 700 }}>{round.prompt}</p>}

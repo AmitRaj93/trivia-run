@@ -123,6 +123,12 @@ function handleMessage(ws, raw) {
 
   switch (msg.type) {
     case C2S.CREATE: {
+      // Only someone with the host passcode may open a room and become host
+      // (host snapshots include the answer keys). If HOST_PASSCODE is unset,
+      // no passcode is required — fine for local testing.
+      if (process.env.HOST_PASSCODE && msg.passcode !== process.env.HOST_PASSCODE) {
+        return send(ws, S2C.ERROR, { message: 'Incorrect host passcode' });
+      }
       const game = createRoom();
       ws.roomCode = game.roomCode;
       ws.role = ROLES.HOST;
@@ -162,7 +168,10 @@ function handleMessage(ws, raw) {
         addClientToRoom(game.roomCode, ws);
         send(ws, S2C.JOINED, { roomCode: game.roomCode, role: ROLES.REP, teamId: team.id });
       } else {
-        ws.role = msg.role === ROLES.HOST ? ROLES.HOST : msg.role === ROLES.TV ? ROLES.TV : ROLES.VIEWER;
+        // JOIN can only ever grant tv/viewer. The host role is handed out solely
+        // by a passcode-checked CREATE, so a client can't claim it (and the answer
+        // keys) just by asking to join as host.
+        ws.role = msg.role === ROLES.TV ? ROLES.TV : ROLES.VIEWER;
         addClientToRoom(game.roomCode, ws);
         send(ws, S2C.JOINED, { roomCode: game.roomCode, role: ws.role });
       }

@@ -96,10 +96,21 @@ export default function TvRound({ state }) {
         </div>
       )}
 
-      {round.revealed && round.answer && (
-        <div style={{ marginTop: 28, fontSize: '2.4vw' }}>
-          <span className="muted">Answer: </span>
-          <b style={{ color: 'var(--good)' }}>{round.answer}</b>
+      {round.revealed && (round.answer || round.answerImage) && (
+        <div style={{ marginTop: 24 }}>
+          {round.answerImage && (
+            <img
+              src={round.answerImage}
+              alt=""
+              style={{ maxHeight: '42vh', maxWidth: '70%', borderRadius: 14, margin: '0 auto 16px', display: 'block', boxShadow: 'var(--shadow)' }}
+            />
+          )}
+          {round.answer && (
+            <div style={{ fontSize: '2.4vw' }}>
+              <span className="muted">Answer: </span>
+              <b style={{ color: 'var(--good)' }}>{round.answer}</b>
+            </div>
+          )}
         </div>
       )}
     </div>

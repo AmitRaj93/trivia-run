@@ -62,6 +62,18 @@ Put images and audio under `public/media/…` and reference them as `/media/…`
 (the sample uses remote placeholder images and `/media/music/*.mp3` paths — drop
 your real clips in `public/media/music/`). Restart the server after editing.
 
+Optional per-question / per-round fields:
+
+- **`image`** on a question — shown with the **question** (e.g. a photo for a Jet
+  Setters clue, or the Invisibles image).
+- **`answerImage`** on a question — shown with the **answer**, and only after the
+  host presses **Reveal** (hidden from players until then). The host sees a small
+  preview while grading.
+- **`subtitle`** on a round — a line shown on that round's title card.
+
+Every round opens on a **title card** (round number, name, subtitle) that the TV
+and players see; the quizmaster presses **Begin round** to start the questions.
+
 ## Running a live event
 
 1. Quizmaster opens `/host`, clicks **Start new game**, notes the room code.
@@ -70,6 +82,49 @@ your real clips in `public/media/music/`). Restart the server after editing.
    enters a team name, taps **Request to join**; the quizmaster approves them.
 4. Use the console to start the quiz, move between rounds/questions, open/close
    answers, arm the buzzer, reveal, and grade.
+
+## Hosting on your Wi-Fi (LAN)
+
+The server listens on all interfaces, and the client derives its WebSocket URL from
+whatever address the browser used — so phones just need to reach your machine.
+
+**Find your IP:** `ipconfig getifaddr en0` → e.g. `192.168.86.43`. Everyone opens
+`http://<that-ip>:3000` and picks their role (players → `/play`, or scan the QR).
+
+**Friendly name instead of the IP (mDNS/Bonjour):** macOS already advertises
+`<LocalHostName>.local`. Give it a clean name once:
+
+```bash
+sudo scutil --set LocalHostName trivia      # then it's http://trivia.local:3000
+```
+
+This also survives DHCP IP changes. To drop the `:3000`, run on port 80:
+
+```bash
+sudo HOST_PASSCODE=yourcode PORT=80 npm start   # http://trivia.local
+```
+
+(`.local` works on iOS and modern Android; older Androids fall back to the IP.)
+
+**The join QR always encodes the raw LAN IP** (from `/api/config`), not whatever
+address you opened the console/TV with — so even if you're on `localhost` or
+`trivia.local`, phones get an IP URL that resolves reliably. The IP URL is also
+printed under the QR as a manual fallback.
+
+## Securing the quizmaster console
+
+By default anyone on the network can open `/host`. Set a passcode so only you can —
+this also protects the answer keys (only the host receives them):
+
+```bash
+HOST_PASSCODE=swordfish npm start      # or put HOST_PASSCODE=… in .env.local
+```
+
+When set, `/host` prompts for the passcode before opening a room; TV and players are
+unaffected. The `JOIN` path can only ever grant the tv/viewer role, so a client can't
+claim host (and the answers) by asking. Keep the app **off the public internet** (no
+port forwarding) and this covers the realistic risks for a LAN trivia night. See
+`.env.example`.
 
 ## Local testing with several teams
 

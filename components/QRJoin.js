@@ -3,24 +3,43 @@
 import { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
 
-// Renders a scannable QR for the player join link, built from whatever address
-// the browser is actually using (so on the LAN it encodes http://<your-ip>:3000/
-// play?room=CODE automatically). Generated locally — no internet needed.
+// Renders a scannable QR for the player join link. It encodes the server's raw
+// LAN IP (fetched from /api/config) rather than the page's own address, because
+// mDNS names like trivia.local — and localhost — don't resolve on many phones,
+// whereas the IP does. Falls back to the current origin if the IP isn't known.
+// Generated locally — no internet needed.
 export default function QRJoin({ roomCode, size = 200, showUrl = true }) {
   const [src, setSrc] = useState('');
   const [url, setUrl] = useState('');
 
   useEffect(() => {
     if (!roomCode) return;
-    const u = `${window.location.origin}/play?room=${roomCode}`;
-    setUrl(u);
-    QRCode.toDataURL(u, {
-      width: size * 2, // render at 2× for crisp scaling on big screens
-      margin: 1,
-      color: { dark: '#0b1020', light: '#ffffff' },
-    })
-      .then(setSrc)
-      .catch(() => {});
+    let cancelled = false;
+
+    (async () => {
+      let origin = window.location.origin;
+      try {
+        const cfg = await fetch('/api/config').then((r) => r.json());
+        if (cfg.lanHost) {
+          const port = window.location.port ? `:${window.location.port}` : '';
+          origin = `http://${cfg.lanHost}${port}`;
+        }
+      } catch {}
+      if (cancelled) return;
+
+      const u = `${origin}/play?room=${roomCode}`;
+      setUrl(u);
+      const dataUrl = await QRCode.toDataURL(u, {
+        width: size * 2, // render at 2× for crisp scaling on big screens
+        margin: 1,
+        color: { dark: '#0b1020', light: '#ffffff' },
+      }).catch(() => '');
+      if (!cancelled && dataUrl) setSrc(dataUrl);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [roomCode, size]);
 
   if (!src) return null;
