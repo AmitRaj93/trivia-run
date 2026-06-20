@@ -45,9 +45,23 @@ export default function TvPage() {
   const teams = state?.teams ?? [];
   const phase = state?.phase;
 
+  // On a revealed Match question, flag teams that matched every pair correctly.
+  const matchPerfectIds = (() => {
+    const r = state?.round;
+    if (r?.kind !== 'match' || !r.revealed || !r.answerKey || !r.submissions) return [];
+    const entries = Object.entries(r.answerKey);
+    if (entries.length === 0) return [];
+    return teams
+      .filter((t) => {
+        const sub = r.submissions[t.id];
+        return sub && entries.every(([k, v]) => String(sub[k] || '').toUpperCase() === String(v).toUpperCase());
+      })
+      .map((t) => t.id);
+  })();
+
   return (
-    <main style={{ minHeight: '100vh', padding: '4vh 4vw', display: 'flex', flexDirection: 'column' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <main style={{ height: '100vh', padding: '4vh 4vw', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
         <h1 style={{ fontSize: '2.4vw', margin: 0 }}>{state?.quizTitle ?? 'Trivia Run'}</h1>
         {state?.timer && <Timer endsAt={state.timer.endsAt} big />}
         <div style={{ textAlign: 'right' }}>
@@ -56,7 +70,7 @@ export default function TvPage() {
         </div>
       </header>
 
-      <section style={{ flex: 1, display: 'grid', placeItems: 'center', padding: '3vh 0' }}>
+      <section style={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '3vh 0' }}>
         {phase === PHASES.LOBBY && <Lobby code={joined.roomCode} teams={teams} maxTeams={state?.config?.maxTeams ?? 4} />}
         {phase === PHASES.IN_ROUND &&
           (state?.roundIntro ? (
@@ -68,8 +82,8 @@ export default function TvPage() {
       </section>
 
       {phase === PHASES.IN_ROUND && teams.length > 0 && (
-        <footer style={{ maxWidth: 1100, margin: '0 auto', width: '100%' }}>
-          <Scoreboard teams={teams} highlightId={state?.round?.directTeamId} />
+        <footer style={{ maxWidth: 1100, margin: '0 auto', width: '100%', flexShrink: 0 }}>
+          <Scoreboard teams={teams} highlightId={state?.round?.directTeamId} starIds={matchPerfectIds} />
         </footer>
       )}
     </main>

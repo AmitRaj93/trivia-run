@@ -1,6 +1,7 @@
 'use client';
 
 import { ACTIONS, PHASES } from '../../lib/protocol.js';
+import MatchEntry from '../MatchEntry.js';
 
 // Host-side control panel for the active round. Shares a nav bar (prev/next/
 // reveal) and switches the body on round.kind. Quads is fully wired; other round
@@ -95,31 +96,50 @@ function SubmissionBar({ round, teams, action }) {
   );
 }
 
+// One side of a Match question as a compact 2×3 grid for the console.
+function HostMatchGrid({ items = [], labels, answerKey }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, auto)', gap: 8 }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+          <b style={{ fontSize: 12 }}>
+            {labels[i]}
+            {answerKey && <span className="muted"> → {answerKey[String(i + 1)]}</span>}
+          </b>
+          <MatchEntry value={it} imgStyle={{ height: 44, width: 70 }} textStyle={{ fontSize: 12, textAlign: 'center' }} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function MatchHostBody({ round, teams, action }) {
   const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
   return (
     <div>
       <div style={{ display: 'flex', gap: 24, marginTop: 14, flexWrap: 'wrap' }}>
-        <ol style={{ margin: 0 }}>
-          {(round.left || []).map((l, i) => (
-            <li key={i}><b>{l}</b> {round.answerKey && <span className="muted">→ {round.answerKey[String(i + 1)]}</span>}</li>
-          ))}
-        </ol>
-        <ol type="A" style={{ margin: 0 }}>
-          {(round.right || []).map((r, i) => <li key={i}>{r}</li>)}
-        </ol>
+        <HostMatchGrid items={round.left} labels={['1', '2', '3', '4', '5', '6']} answerKey={round.answerKey} />
+        <HostMatchGrid items={round.right} labels={letters} />
       </div>
       <SubmissionBar round={round} teams={teams} action={action} />
-      <button style={{ marginTop: 12 }} onClick={() => action(ACTIONS.AUTO_GRADE)}>⚖ Auto-grade (5/pair)</button>
+      <button style={{ marginTop: 12 }} onClick={() => action(ACTIONS.AUTO_GRADE)}>⚖ Auto-grade (5/pair, +5 all correct)</button>
       <div style={{ marginTop: 12, display: 'grid', gap: 6 }}>
         {teams.map((t) => {
           const sub = round.submissions?.[t.id];
+          const total = Object.keys(round.answerKey || {}).length;
+          const correct = round.answerKey
+            ? Object.entries(round.answerKey).filter(
+                ([k, v]) => String(sub?.[k] || '').toUpperCase() === String(v).toUpperCase()
+              ).length
+            : 0;
+          const perfect = round.answerKey && sub && total > 0 && correct === total;
           return (
-            <div key={t.id} style={{ display: 'flex', gap: 8, fontSize: 14 }}>
+            <div key={t.id} style={{ display: 'flex', gap: 8, fontSize: 14, alignItems: 'center' }}>
               <b style={{ width: 120 }}>{t.name}</b>
               <span className="muted" style={{ flex: 1 }}>
                 {sub ? letters.map((_, i) => `${i + 1}→${sub[String(i + 1)] || '?'}`).join('  ') : 'no submission'}
               </span>
+              {round.answerKey && sub && <span className="muted">{correct}/{total}{perfect ? ' ★' : ''}</span>}
               {round.graded?.[t.id] != null && <b style={{ color: 'var(--good)' }}>+{round.graded[t.id]}</b>}
             </div>
           );
@@ -130,22 +150,43 @@ function MatchHostBody({ round, teams, action }) {
 }
 
 function TextHostBody({ round, teams, action }) {
+  const bonus = round.bonus;
   return (
     <div>
       <SubmissionBar round={round} teams={teams} action={action} />
+      {bonus && (
+        <div className="muted" style={{ fontSize: 13, marginTop: 8 }}>
+          ⭐ Bonus (+{bonus.points}){bonus.q ? `: ${bonus.q}` : ''} — answer: <b style={{ color: 'var(--good)' }}>{bonus.answer ?? '•••'}</b>
+        </div>
+      )}
       <div style={{ marginTop: 12, display: 'grid', gap: 8 }}>
         {teams.map((t) => {
           const sub = round.submissions?.[t.id];
           const pts = round.graded?.[t.id];
+          const bsub = round.bonusSubmissions?.[t.id];
+          const bpts = round.bonusGraded?.[t.id];
           return (
-            <div key={t.id} style={{ display: 'flex', gap: 8, alignItems: 'center', background: 'var(--panel-2)', border: '1px solid var(--border)', borderRadius: 10, padding: '8px 12px' }}>
-              <b style={{ width: 120 }}>{t.name}</b>
-              <span style={{ flex: 1, fontStyle: sub ? 'normal' : 'italic', color: sub ? 'var(--text)' : 'var(--muted)' }}>
-                {sub || 'no submission'}
-              </span>
-              {pts != null && <span className="pill">+{pts}</span>}
-              <button className="primary" onClick={() => action(ACTIONS.GRADE_TEAM, { teamId: t.id, correct: true })}>✓</button>
-              <button className="danger" onClick={() => action(ACTIONS.GRADE_TEAM, { teamId: t.id, correct: false })}>✗</button>
+            <div key={t.id} style={{ background: 'var(--panel-2)', border: '1px solid var(--border)', borderRadius: 10, padding: '8px 12px' }}>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <b style={{ width: 120 }}>{t.name}</b>
+                <span style={{ flex: 1, fontStyle: sub ? 'normal' : 'italic', color: sub ? 'var(--text)' : 'var(--muted)' }}>
+                  {sub || 'no submission'}
+                </span>
+                {pts != null && <span className="pill">+{pts}</span>}
+                <button className="primary" onClick={() => action(ACTIONS.GRADE_TEAM, { teamId: t.id, correct: true })}>✓</button>
+                <button className="danger" onClick={() => action(ACTIONS.GRADE_TEAM, { teamId: t.id, correct: false })}>✗</button>
+              </div>
+              {bonus && (
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 6, paddingTop: 6, borderTop: '1px dashed var(--border)' }}>
+                  <span style={{ width: 120, fontSize: 13 }} className="muted">⭐ bonus</span>
+                  <span style={{ flex: 1, fontSize: 14, fontStyle: bsub ? 'normal' : 'italic', color: bsub ? 'var(--text)' : 'var(--muted)' }}>
+                    {bsub || 'no bonus answer'}
+                  </span>
+                  {bpts != null && <span className="pill">+{bpts}</span>}
+                  <button className="primary" onClick={() => action(ACTIONS.GRADE_BONUS, { teamId: t.id, correct: true })}>✓</button>
+                  <button className="danger" onClick={() => action(ACTIONS.GRADE_BONUS, { teamId: t.id, correct: false })}>✗</button>
+                </div>
+              )}
             </div>
           );
         })}
@@ -163,7 +204,7 @@ function NavBar({ state, action }) {
       <button onClick={() => action(ACTIONS.PREV_QUESTION)} disabled={idx <= 1}>← Prev</button>
       <span style={{ fontWeight: 700 }}>
         {round.kind === 'quads'
-          ? `Set ${round.setIndex + 1}/${round.setCount} · Q ${round.qInSet + 1}/${round.perSet}`
+          ? `Set ${round.setIndex + 1}/${round.setCount} · Q ${round.qIndex + 1}/${round.count}`
           : `Q ${idx}/${total}`}
       </span>
       <button onClick={() => action(ACTIONS.NEXT_QUESTION)} disabled={idx >= total}>Next →</button>

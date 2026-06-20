@@ -1,8 +1,10 @@
 import ConnDot from './ConnDot.js';
 
 // Compact live standings, shared by TV / host / viewer. `big` scales it up for TV.
-export default function Scoreboard({ teams = [], big = false, highlightId = null }) {
+// `starIds` marks teams to flag with a ★ (e.g. a perfect Match round on reveal).
+export default function Scoreboard({ teams = [], big = false, highlightId = null, starIds = [] }) {
   if (teams.length === 0) return null;
+  const starred = new Set(starIds);
   const max = Math.max(1, ...teams.map((t) => t.score));
   return (
     <div style={{ display: 'grid', gap: big ? 12 : 8 }}>
@@ -23,7 +25,12 @@ export default function Scoreboard({ teams = [], big = false, highlightId = null
             {i + 1}
           </span>
           <ConnDot on={t.repConnected} />
-          <span style={{ flex: 1, fontWeight: 700, fontSize: big ? '1.6vw' : 16 }}>{t.name}</span>
+          <span style={{ flex: 1, fontWeight: 700, fontSize: big ? '1.6vw' : 16 }}>
+            {t.name}
+            {starred.has(t.id) && (
+              <span title="Perfect!" style={{ marginLeft: 8, color: 'var(--warn)' }}>★</span>
+            )}
+          </span>
           <div
             style={{
               position: 'relative',

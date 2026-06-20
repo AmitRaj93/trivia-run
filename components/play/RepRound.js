@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { PHASES } from '../../lib/protocol.js';
 import RoundIntro from '../RoundIntro.js';
+import MatchEntry from '../MatchEntry.js';
 
 // What a team's representative sees on their phone during play. Switches on
 // round.kind: quads is answered aloud; match/jetsetters/invisibles take input here.
@@ -96,13 +97,28 @@ function MatchRep({ round, submitted, answer }) {
   return (
     <div>
       <p style={{ fontWeight: 700 }}>{round.prompt}</p>
+
+      {/* The lettered options to match against (images or text). */}
+      <div className="muted" style={{ fontSize: 12, marginBottom: 4 }}>Options</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, marginBottom: 14 }}>
+        {(round.right || []).map((r, i) => (
+          <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, border: '1px solid var(--border)', borderRadius: 8, padding: 6, background: 'var(--panel)' }}>
+            <b style={{ color: 'var(--accent)' }}>{letters[i]}</b>
+            <MatchEntry value={r} imgStyle={{ width: '100%', height: 56 }} textStyle={{ fontSize: 13, textAlign: 'center' }} />
+          </div>
+        ))}
+      </div>
+
+      {/* Each numbered item, pick its matching letter. */}
       <div style={{ display: 'grid', gap: 8 }}>
         {(round.left || []).map((l, i) => {
           const num = String(i + 1);
           return (
             <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ width: 24, fontWeight: 800 }}>{num}.</span>
-              <span style={{ flex: 1 }}>{l}</span>
+              <span style={{ width: 20, fontWeight: 800 }}>{num}.</span>
+              <div style={{ flex: 1 }}>
+                <MatchEntry value={l} imgStyle={{ height: 52, maxWidth: '100%' }} textStyle={{ fontWeight: 600 }} />
+              </div>
               <select
                 value={map[num] || ''}
                 disabled={!round.open}
@@ -116,9 +132,7 @@ function MatchRep({ round, submitted, answer }) {
           );
         })}
       </div>
-      <div className="muted" style={{ fontSize: 13, margin: '10px 0' }}>
-        Options: {(round.right || []).map((r, i) => `${letters[i]}=${r}`).join(' · ')}
-      </div>
+      <div style={{ height: 12 }} />
       {round.open ? (
         <button className="primary" style={{ width: '100%' }} disabled={!complete} onClick={() => answer({ value: map })}>
           {submitted ? 'Update answer' : 'Submit'}
@@ -133,10 +147,15 @@ function MatchRep({ round, submitted, answer }) {
 
 function TextRep({ round, submitted, answer }) {
   const [text, setText] = useState('');
-  useEffect(() => setText(''), [round.qIndex]);
+  const [bonus, setBonus] = useState('');
+  useEffect(() => {
+    setText('');
+    setBonus('');
+  }, [round.qIndex]);
 
   if (!round.open && !submitted) return <Closed prompt={round.prompt} />;
   const showImage = round.media && round.kind === 'jetsetters';
+  const submit = () => answer(round.bonus ? { value: text.trim(), bonus: bonus.trim() } : { value: text.trim() });
   return (
     <div>
       {showImage && (
@@ -152,8 +171,23 @@ function TextRep({ round, submitted, answer }) {
         placeholder="Your answer"
         style={{ width: '100%', marginBottom: 10 }}
       />
+      {round.bonus && (
+        <div style={{ border: '1px solid var(--accent)', borderRadius: 10, padding: 10, marginBottom: 10, background: 'var(--panel)' }}>
+          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 6 }}>
+            ⭐ Bonus <span className="muted">(+{round.bonus.points})</span>
+          </div>
+          {round.bonus.q && <p style={{ margin: '0 0 8px', fontSize: 14 }}>{round.bonus.q}</p>}
+          <input
+            value={bonus}
+            onChange={(e) => setBonus(e.target.value)}
+            disabled={!round.open}
+            placeholder="Bonus answer (optional)"
+            style={{ width: '100%' }}
+          />
+        </div>
+      )}
       {round.open ? (
-        <button className="primary" style={{ width: '100%' }} disabled={!text.trim()} onClick={() => answer({ value: text.trim() })}>
+        <button className="primary" style={{ width: '100%' }} disabled={!text.trim()} onClick={submit}>
           {submitted ? 'Update answer' : 'Submit'}
         </button>
       ) : (
