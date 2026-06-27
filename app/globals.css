@@ -139,3 +139,15 @@ input:focus {
   from { opacity: 0; transform: translateY(12px) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
+
+@keyframes vizBounce {
+  0%, 100% { height: 10%; }
+  50% { height: 100%; }
+}
+.viz-bar {
+  align-self: flex-end;
+  height: 10%;
+  border-radius: 6px;
+  background: linear-gradient(to top, var(--accent), var(--accent-2));
+  animation: vizBounce 0.8s ease-in-out infinite;
+}

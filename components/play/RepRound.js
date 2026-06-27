@@ -33,8 +33,8 @@ export default function RepRound({ state, myTeamId, answer }) {
       <TeamBadge me={me} />
       <div style={{ marginTop: 14 }}>
         {round.kind === 'quads' && <QuadsRep round={round} myTeamId={myTeamId} />}
-        {round.kind === 'match' && <MatchRep round={round} submitted={submitted} answer={answer} />}
-        {(round.kind === 'jetsetters' || round.kind === 'invisibles') && (
+        {round.kind === 'match' && <MatchRep round={round} submitted={submitted} answer={answer} myTeamId={myTeamId} />}
+        {(round.kind === 'jetsetters' || round.kind === 'invisibles' || round.kind === 'emoji') && (
           <TextRep round={round} submitted={submitted} answer={answer} />
         )}
         {round.kind === 'music' && <MusicRep round={round} myTeamId={myTeamId} answer={answer} />}
@@ -85,7 +85,7 @@ function QuadsRep({ round, myTeamId }) {
   );
 }
 
-function MatchRep({ round, submitted, answer }) {
+function MatchRep({ round, submitted, answer, myTeamId }) {
   const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
   const [map, setMap] = useState({});
   // Reset the local mapping when the question changes.
@@ -94,8 +94,39 @@ function MatchRep({ round, submitted, answer }) {
   if (!round.open && !submitted) return <Closed prompt={round.prompt} />;
 
   const complete = (round.left || []).every((_, i) => map[String(i + 1)]);
+
+  // Once the host reveals, this team sees their own result — a ★ for a perfect match.
+  const showResult = round.revealed && round.answerKey;
+  const total = Object.keys(round.answerKey || {}).length;
+  const mySub = round.submissions?.[myTeamId] || {};
+  const correct = round.answerKey
+    ? Object.entries(round.answerKey).filter(([k, v]) => String(mySub[k] || '').toUpperCase() === String(v).toUpperCase()).length
+    : 0;
+  const perfect = total > 0 && correct === total;
+  const pts = round.graded?.[myTeamId];
+
   return (
     <div>
+      {showResult && (
+        <div
+          style={{
+            textAlign: 'center',
+            padding: 16,
+            borderRadius: 12,
+            marginBottom: 14,
+            background: perfect ? 'linear-gradient(135deg, var(--warn), var(--accent-2))' : 'var(--panel)',
+            color: perfect ? '#0b1020' : 'var(--text)',
+            border: '1px solid var(--border)',
+          }}
+        >
+          {perfect ? (
+            <div style={{ fontWeight: 900, fontSize: 24 }}>🌟 Perfect! All {total} matched</div>
+          ) : (
+            <div style={{ fontWeight: 800, fontSize: 18 }}>{correct} / {total} correct</div>
+          )}
+          {pts != null && <div style={{ fontWeight: 800, marginTop: 4 }}>+{pts} points</div>}
+        </div>
+      )}
       <p style={{ fontWeight: 700 }}>{round.prompt}</p>
 
       {/* The lettered options to match against (images or text). */}
@@ -161,7 +192,9 @@ function TextRep({ round, submitted, answer }) {
       {showImage && (
         <img src={round.media} alt="" style={{ width: '100%', borderRadius: 10, marginBottom: 10, display: 'block' }} />
       )}
-      {round.media && round.kind === 'invisibles'
+      {round.kind === 'emoji'
+        ? <p style={{ fontSize: 44, textAlign: 'center', lineHeight: 1.2, margin: '4px 0 14px' }}>{round.prompt}</p>
+        : round.media && round.kind === 'invisibles'
         ? <p className="muted">Look at the image on the TV and type your answer.</p>
         : <p style={{ fontWeight: 700 }}>{round.prompt}</p>}
       <input

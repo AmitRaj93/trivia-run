@@ -6,6 +6,7 @@ import { ACTIONS, PHASES } from '../../lib/protocol.js';
 import ConnDot from '../../components/ConnDot.js';
 import HostRoundControls from '../../components/host/HostRoundControls.js';
 import TimerControls from '../../components/host/TimerControls.js';
+import AnswerTracker from '../../components/host/AnswerTracker.js';
 import QRJoin from '../../components/QRJoin.js';
 
 export default function HostPage() {
@@ -110,7 +111,7 @@ export default function HostPage() {
           <section className="panel" style={{ padding: 16 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
               <h3 style={{ margin: 0 }}>Teams</h3>
-              <span className="muted">{teams.length}/{state?.config?.maxTeams ?? 4}</span>
+              <span className="muted">{teams.length} {teams.length === 1 ? 'team' : 'teams'}</span>
             </div>
             {teams.length === 0 && <p className="muted" style={{ fontSize: 14 }}>No teams yet. Share code <b className="roomcode">{joined.roomCode}</b>.</p>}
             <div style={{ display: 'grid', gap: 8, marginTop: 10 }}>
@@ -162,6 +163,10 @@ export default function HostPage() {
 
           <HostRoundControls state={state} action={action} />
         </section>
+      </div>
+
+      <div style={{ marginTop: 20 }}>
+        <AnswerTracker state={state} />
       </div>
     </main>
   );

@@ -8,10 +8,15 @@ import TvRound from '../../components/tv/TvRound.js';
 import Timer from '../../components/Timer.js';
 import QRJoin from '../../components/QRJoin.js';
 import RoundIntro from '../../components/RoundIntro.js';
+import { installAudioUnlock } from '../../lib/audioUnlock.js';
 
 export default function TvPage() {
   const { connected, joined, state, joinTv, error } = useGameSocket();
   const [code, setCode] = useState('');
+
+  // Unlock audio playback on the first interaction with this screen (so the music
+  // round just plays when the host hits Play — no separate "Enable sound" step).
+  useEffect(() => installAudioUnlock(), []);
 
   useEffect(() => {
     const room = new URLSearchParams(window.location.search).get('room');
@@ -71,7 +76,7 @@ export default function TvPage() {
       </header>
 
       <section style={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '3vh 0' }}>
-        {phase === PHASES.LOBBY && <Lobby code={joined.roomCode} teams={teams} maxTeams={state?.config?.maxTeams ?? 4} />}
+        {phase === PHASES.LOBBY && <Lobby code={joined.roomCode} teams={teams} />}
         {phase === PHASES.IN_ROUND &&
           (state?.roundIntro ? (
             <RoundIntro round={state?.rounds?.[state?.roundIndex]} index={state?.roundIndex} total={state?.rounds?.length} big />
@@ -81,7 +86,9 @@ export default function TvPage() {
         {phase === PHASES.FINISHED && <Podium teams={teams} />}
       </section>
 
-      {phase === PHASES.IN_ROUND && teams.length > 0 && (
+      {/* Standings sit under the round title card only — hidden during questions so
+          they never cover an image/reveal. */}
+      {phase === PHASES.IN_ROUND && state?.roundIntro && teams.length > 0 && (
         <footer style={{ maxWidth: 1100, margin: '0 auto', width: '100%', flexShrink: 0 }}>
           <Scoreboard teams={teams} highlightId={state?.round?.directTeamId} starIds={matchPerfectIds} />
         </footer>
@@ -90,7 +97,11 @@ export default function TvPage() {
   );
 }
 
-function Lobby({ code, teams, maxTeams }) {
+function Lobby({ code, teams }) {
+  // The team count is whatever the host approves — show every joined team and pad
+  // with a few empty slots as a hint until they arrive. The grid auto-fits, so it
+  // scales from 1 team to many without a fixed 4-up layout.
+  const slots = Math.max(teams.length, 4);
   return (
     <div style={{ textAlign: 'center', width: '100%', maxWidth: 1000 }}>
       <div style={{ fontSize: '2vw', marginBottom: 6 }}>Teams, join now</div>
@@ -104,12 +115,12 @@ function Lobby({ code, teams, maxTeams }) {
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: `repeat(${Math.max(2, maxTeams)}, 1fr)`,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
           gap: 16,
           marginTop: 28,
         }}
       >
-        {Array.from({ length: maxTeams }).map((_, i) => {
+        {Array.from({ length: slots }).map((_, i) => {
           const t = teams[i];
           return (
             <div
@@ -133,15 +144,25 @@ function Lobby({ code, teams, maxTeams }) {
 }
 
 function Podium({ teams }) {
-  const top = teams.slice(0, 3);
   const medals = ['🥇', '🥈', '🥉'];
   return (
     <div style={{ textAlign: 'center', width: '100%' }}>
       <div style={{ fontSize: '2.6vw', fontWeight: 800, marginBottom: 24 }}>Final standings</div>
-      <div style={{ display: 'grid', gap: 16, maxWidth: 800, margin: '0 auto' }}>
-        {top.map((t, i) => (
-          <div key={t.id} className="panel" style={{ padding: '20px 28px', display: 'flex', alignItems: 'center', gap: 16, fontSize: '2vw' }}>
-            <span>{medals[i]}</span>
+      <div style={{ display: 'grid', gap: 14, maxWidth: 820, margin: '0 auto' }}>
+        {teams.map((t, i) => (
+          <div
+            key={t.id}
+            className="panel"
+            style={{
+              padding: '16px 28px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 16,
+              fontSize: i < 3 ? '2vw' : '1.6vw',
+              opacity: i < 3 ? 1 : 0.85,
+            }}
+          >
+            <span style={{ minWidth: '2.4vw', textAlign: 'center' }}>{medals[i] ?? i + 1}</span>
             <span style={{ flex: 1, fontWeight: 800, textAlign: 'left' }}>{t.name}</span>
             <span style={{ color: 'var(--accent)', fontWeight: 800 }}>{t.score}</span>
           </div>

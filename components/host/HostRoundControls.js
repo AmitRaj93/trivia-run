@@ -71,7 +71,7 @@ export default function HostRoundControls({ state, action }) {
 
       {round.kind === 'quads' && <QuadsBody round={round} teams={teams} nameOf={nameOf} action={action} />}
       {round.kind === 'match' && <MatchHostBody round={round} teams={teams} action={action} />}
-      {(round.kind === 'jetsetters' || round.kind === 'invisibles') && (
+      {(round.kind === 'jetsetters' || round.kind === 'invisibles' || round.kind === 'emoji') && (
         <TextHostBody round={round} teams={teams} action={action} />
       )}
       {round.kind === 'music' && <MusicHostBody round={round} teams={teams} nameOf={nameOf} action={action} />}
@@ -272,10 +272,28 @@ function MusicHostBody({ round, teams, nameOf, action }) {
   const winner = round.winnerId;
   return (
     <div style={{ marginTop: 16 }}>
-      {round.audio && (
-        <audio controls src={round.audio} style={{ width: '100%', marginBottom: 12 }}>
-          your browser can’t play this clip
-        </audio>
+      {/* Sound plays from the TV (one-time "Enable sound" on that screen). These
+          are remote controls — the host hears nothing locally. */}
+      {round.audio ? (
+        <div style={{ marginBottom: 12 }}>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+            {round.playing ? (
+              <button onClick={() => action(ACTIONS.MUSIC_SET_PLAYING, { playing: false })}>⏸ Pause</button>
+            ) : (
+              <button className="primary" onClick={() => action(ACTIONS.MUSIC_SET_PLAYING, { playing: true })}>▶ Play</button>
+            )}
+            <button onClick={() => action(ACTIONS.MUSIC_RESTART)}>↻ Restart</button>
+            <span className="pill" style={{ background: round.playing ? 'var(--good)' : 'var(--panel-2)', color: round.playing ? '#0b1020' : 'var(--muted)' }}>
+              {round.playing ? '♪ playing on TV' : 'paused'}
+            </span>
+          </div>
+          <p className="muted" style={{ fontSize: 12, marginTop: 6 }}>
+            Sound plays on the TV. It unlocks the first time you interact with that screen (typing
+            the code / a click) — usually already done by setup, so Play just works.
+          </p>
+        </div>
+      ) : (
+        <p className="muted" style={{ fontSize: 13, marginBottom: 12 }}>No audio set for this question.</p>
       )}
       <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
         {round.armed ? (

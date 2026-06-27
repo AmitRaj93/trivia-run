@@ -16,9 +16,14 @@ const TYPES = {
   '.webp': 'image/webp',
   '.avif': 'image/avif',
   '.svg': 'image/svg+xml',
+  '.mp3': 'audio/mpeg',
+  '.m4a': 'audio/mp4',
+  '.wav': 'audio/wav',
+  '.ogg': 'audio/ogg',
+  '.flac': 'audio/flac',
 };
 
-export async function GET(_req, { params }) {
+export async function GET(req, { params }) {
   loadQuiz(); // ensure the token map is populated (idempotent / cached)
   const url = resolveImageToken(params.token);
   if (!url) return new Response('Not found', { status: 404 });
@@ -53,13 +58,35 @@ export async function GET(_req, { params }) {
     } catch {
       file = await readFile(join(process.cwd(), 'public', rel));
     }
+    const ct = TYPES[extname(url).toLowerCase()] || 'application/octet-stream';
+
+    // Honour Range requests so <audio>/<video> can seek and play reliably.
+    const range = req.headers.get('range');
+    const m = range && /bytes=(\d+)-(\d*)/.exec(range);
+    if (m) {
+      const start = parseInt(m[1], 10);
+      const end = m[2] ? parseInt(m[2], 10) : file.length - 1;
+      const chunk = file.subarray(start, end + 1);
+      return new Response(chunk, {
+        status: 206,
+        headers: {
+          'content-type': ct,
+          'content-range': `bytes ${start}-${end}/${file.length}`,
+          'accept-ranges': 'bytes',
+          'content-length': String(chunk.length),
+          'cache-control': 'public, max-age=86400',
+        },
+      });
+    }
     return new Response(file, {
       headers: {
-        'content-type': TYPES[extname(url).toLowerCase()] || 'application/octet-stream',
+        'content-type': ct,
+        'accept-ranges': 'bytes',
+        'content-length': String(file.length),
         'cache-control': 'public, max-age=86400',
       },
     });
   } catch {
-    return new Response('Image error', { status: 502 });
+    return new Response('Media error', { status: 502 });
   }
 }

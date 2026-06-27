@@ -27,9 +27,48 @@ export default function RoundIntro({ round, index, total, big = false }) {
           {round.subtitle}
         </p>
       )}
-      <div className="muted" style={{ fontSize: big ? '1.3vw' : 13, marginTop: big ? 24 : 14 }}>
+
+      {round.quotes?.length > 0 && (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'stretch',
+            gap: big ? '3vw' : 16,
+            flexWrap: 'wrap',
+            margin: big ? '3vh auto 0' : '18px auto 0',
+            maxWidth: big ? '88%' : '100%',
+          }}
+        >
+          {round.quotes.map((qt, i) => (
+            <Quote key={i} quote={qt} big={big} multi={round.quotes.length > 1} />
+          ))}
+        </div>
+      )}
+
+      <div className="muted" style={{ fontSize: big ? '1.3vw' : 13, marginTop: big ? '3vh' : 14 }}>
         Get ready…
       </div>
     </div>
+  );
+}
+
+function Quote({ quote, big, multi }) {
+  return (
+    <blockquote
+      style={{
+        flex: multi ? '1 1 0' : '0 1 auto',
+        maxWidth: multi ? '42%' : big ? '34em' : '100%',
+        margin: 0,
+        padding: big ? '0 1.5vw' : '0 8px',
+        borderLeft: `${big ? '0.3vw' : '3px'} solid var(--accent)`,
+        textAlign: 'left',
+      }}
+    >
+      <p style={{ fontStyle: 'italic', fontSize: big ? '1.7vw' : 16, lineHeight: 1.3, margin: 0 }}>“{quote.text}”</p>
+      <footer className="muted" style={{ fontSize: big ? '1.3vw' : 13, marginTop: big ? '1vh' : 6 }}>
+        — {quote.author}
+      </footer>
+    </blockquote>
   );
 }

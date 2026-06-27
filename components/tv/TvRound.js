@@ -1,6 +1,8 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import MatchEntry from '../MatchEntry.js';
+import { isAudioUnlocked } from '../../lib/audioUnlock.js';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 const NUMBERS = ['1', '2', '3', '4', '5', '6'];
@@ -16,15 +18,17 @@ function TvMatchGrid({ items = [], labels, answerKey }) {
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.8vh 1.2vw', justifyItems: 'center' }}>
       {items.map((it, i) => (
         <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-          <div style={{ fontSize: '1.4vw', fontWeight: 800, color: 'var(--accent)' }}>{labels[i]}</div>
+          {/* On reveal the matched letter is appended to the heading (e.g. "1 → C"),
+              like the host console — instead of a separate line below the image. */}
+          <div style={{ fontSize: '1.4vw', fontWeight: 800, color: 'var(--accent)' }}>
+            {labels[i]}
+            {answerKey && <span style={{ color: 'var(--good)' }}> → {answerKey[String(i + 1)]}</span>}
+          </div>
           <MatchEntry
             value={it}
             imgStyle={{ ...TV_MATCH_CANVAS }}
             textStyle={{ width: TV_MATCH_CANVAS.width, fontSize: '1.4vw', fontWeight: 700, textAlign: 'center' }}
           />
-          {answerKey && (
-            <div style={{ fontSize: '1.2vw', fontWeight: 800, color: 'var(--good)' }}>→ {answerKey[String(i + 1)]}</div>
-          )}
         </div>
       ))}
     </div>
@@ -40,15 +44,16 @@ export default function TvRound({ state }) {
 
   const roundTitle = state?.rounds?.[state?.roundIndex]?.title ?? '';
 
-  // The main image slot: normally the question image; once revealed, the answer
-  // image takes its place (so the reveal swaps the picture rather than stacking a
-  // second one below). Falls back to the question image if there's no answer image.
-  const mainImage =
-    round.revealed && round.answerImage
-      ? round.answerImage
-      : isImage(round.media)
-      ? round.media
-      : null;
+  // Image slot. The question image (e.g. the baby photo) shows throughout. On
+  // reveal, if there's also an answer image, the two are shown SIDE BY SIDE
+  // (question on the left, answer on the right) rather than swapping one for the
+  // other — so the room can compare "then vs. now". If a question has only an
+  // answer image (no question image), the reveal just shows that one.
+  const questionImage = isImage(round.media) ? round.media : null;
+  const answerImageSrc = round.revealed && round.answerImage ? round.answerImage : null;
+  const sideBySide = !!(questionImage && answerImageSrc);
+  const soloImage = sideBySide ? null : answerImageSrc || questionImage;
+  const hasImage = sideBySide || !!soloImage;
 
   return (
     <div
@@ -74,14 +79,32 @@ export default function TvRound({ state }) {
         </div>
       )}
 
-      {mainImage && <FitImage key={mainImage} src={mainImage} minVh={42} />}
+      {sideBySide ? (
+        <div
+          style={{
+            flex: '1 1 auto',
+            minHeight: '36vh',
+            width: '100%',
+            display: 'flex',
+            gap: '2vw',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <RevealImage src={questionImage} caption="Then" />
+          <RevealImage src={answerImageSrc} caption="Now" />
+        </div>
+      ) : (
+        soloImage && <FitImage key={soloImage} src={soloImage} minVh={36} />
+      )}
 
       {round.prompt && (
         <div
           style={{
-            // When there's an image the image takes ~half the screen, so the text
+            // Emoji prompts render extra-large (they're the whole puzzle). Otherwise,
+            // when there's an image the image takes ~half the screen, so the text
             // shrinks to fit the rest.
-            fontSize: mainImage ? '1.7vw' : '2.6vw',
+            fontSize: round.kind === 'emoji' ? '7vw' : hasImage ? '1.5vw' : '2.6vw',
             fontWeight: 800,
             maxWidth: '92%',
             lineHeight: 1.12,
@@ -120,7 +143,12 @@ export default function TvRound({ state }) {
       )}
 
       {round.kind === 'music' && (
-        <div style={{ flexShrink: 0 }}>
+        <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2vh' }}>
+          {round.audio && <TvAudio src={round.audio} playing={round.playing} restartAt={round.restartAt} />}
+          <MusicViz playing={round.playing} />
+          <div className="muted" style={{ fontSize: '1.4vw' }}>
+            {round.playing ? '♪ Now playing…' : 'Listen up!'}
+          </div>
           {round.winnerId ? (
             <div style={{ fontSize: '4vw', fontWeight: 900, color: 'var(--accent)' }}>🚨 {nameOf(round.winnerId)}!</div>
           ) : round.armed ? (
@@ -129,14 +157,14 @@ export default function TvRound({ state }) {
             <div className="muted" style={{ fontSize: '1.8vw' }}>Get ready to buzz…</div>
           )}
           {round.lockedOut?.length > 0 && (
-            <div className="muted" style={{ fontSize: '1.2vw', marginTop: 8 }}>
+            <div className="muted" style={{ fontSize: '1.2vw' }}>
               out: {round.lockedOut.map(nameOf).filter(Boolean).join(', ')}
             </div>
           )}
         </div>
       )}
 
-      {['match', 'jetsetters', 'invisibles'].includes(round.kind) && (
+      {['match', 'jetsetters', 'invisibles', 'emoji'].includes(round.kind) && (
         <div style={{ flexShrink: 0 }}>
           <span
             className="pill"
@@ -164,15 +192,15 @@ export default function TvRound({ state }) {
           position pre- and post-reveal (e.g. Invisibles, where the answer image is
           meant to overlap the question image), instead of the answer text shrinking
           and re-centering it on reveal. */}
-      {mainImage ? (
+      {hasImage ? (
         <div
           style={{
             flexShrink: 0,
-            minHeight: '7vh',
+            minHeight: '6vh',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '1.9vw',
+            fontSize: '1.6vw',
           }}
         >
           {round.revealed && round.answer && (
@@ -217,6 +245,124 @@ function FitImage({ src, minVh = 0 }) {
         alt=""
         style={{ maxHeight: '100%', maxWidth: '90%', objectFit: 'contain', borderRadius: 14, boxShadow: 'var(--shadow)' }}
       />
+    </div>
+  );
+}
+
+// One half of the side-by-side reveal: an aspect-preserving image with a small
+// caption above it ("Then" / "Now"). Each takes an equal share of the row and may
+// shrink (min-width: 0) so two portrait photos sit comfortably next to each other.
+function RevealImage({ src, caption }) {
+  return (
+    <div style={{ flex: '1 1 0', minWidth: 0, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1vh' }}>
+      {caption && (
+        <div className="pill" style={{ fontSize: '1.1vw', flexShrink: 0 }}>{caption}</div>
+      )}
+      {/* Caption stays pinned at the top (both columns align), image fills the rest. */}
+      <div style={{ flex: '1 1 0', minHeight: 0, width: '100%', display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}>
+        <img
+          src={src}
+          alt=""
+          style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain', borderRadius: 14, boxShadow: 'var(--shadow)' }}
+        />
+      </div>
+    </div>
+  );
+}
+
+// The TV is where the music actually plays (so it comes out of the room's speakers).
+// The host controls it remotely via the `playing` flag and `restartAt`. Browsers
+// block autoplay, so the operator clicks "Enable sound" once to unlock playback.
+function TvAudio({ src, playing, restartAt }) {
+  const ref = useRef(null);
+  const [unlocked, setUnlocked] = useState(isAudioUnlocked());
+  const [needTap, setNeedTap] = useState(false);
+
+  // Audio is unlocked by the first interaction anywhere on the TV (see lib/audioUnlock).
+  useEffect(() => {
+    if (unlocked) return;
+    const onUnlock = () => setUnlocked(true);
+    window.addEventListener('audio-unlocked', onUnlock);
+    return () => window.removeEventListener('audio-unlocked', onUnlock);
+  }, [unlocked]);
+
+  // Load a new clip when the question changes.
+  useEffect(() => {
+    const a = ref.current;
+    if (a && src && a.getAttribute('src') !== src) {
+      a.setAttribute('src', src);
+      a.load();
+    }
+  }, [src]);
+
+  // Follow the host's play/pause (restart from 0 if the clip had finished).
+  useEffect(() => {
+    const a = ref.current;
+    if (!a) return;
+    if (playing) {
+      if (!unlocked) {
+        setNeedTap(true); // never interacted with the TV yet — prompt one tap
+        return;
+      }
+      if (a.ended) a.currentTime = 0;
+      a.play().then(() => setNeedTap(false)).catch(() => setNeedTap(true));
+    } else {
+      a.pause();
+    }
+  }, [playing, unlocked, src]);
+
+  // Restart command -> seek to 0 and play.
+  useEffect(() => {
+    const a = ref.current;
+    if (!a || !unlocked || !restartAt) return;
+    a.currentTime = 0;
+    a.play().catch(() => {});
+  }, [restartAt]);
+
+  // Fallback only shown if the host presses Play before the TV has been touched.
+  const tapStart = () => {
+    setUnlocked(true);
+    setNeedTap(false);
+    const a = ref.current;
+    if (a) {
+      if (a.ended) a.currentTime = 0;
+      a.play().catch(() => {});
+    }
+  };
+
+  return (
+    <>
+      <audio ref={ref} preload="auto" />
+      {needTap && (
+        <button className="primary" style={{ fontSize: '1.5vw', padding: '1vh 2.5vw' }} onClick={tapStart}>
+          👆 Tap to start the sound
+        </button>
+      )}
+    </>
+  );
+}
+
+// Animated equalizer. Bars bounce while the host's audio is playing (driven by the
+// `playing` flag broadcast on play/pause) and freeze, dimmed, when paused.
+function MusicViz({ playing }) {
+  const bars = 32;
+  return (
+    <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: '0.5vw', height: '26vh', width: '70vw' }}>
+      {Array.from({ length: bars }).map((_, i) => (
+        <div
+          key={i}
+          className="viz-bar"
+          style={{
+            flex: 1,
+            maxWidth: '1.6vw',
+            // staggered durations/delays give an organic, music-reactive look
+            animationDuration: `${0.55 + ((i * 7) % 9) * 0.07}s`,
+            animationDelay: `${(i % 8) * 0.06}s`,
+            animationPlayState: playing ? 'running' : 'paused',
+            opacity: playing ? 1 : 0.35,
+          }}
+        />
+      ))}
     </div>
   );
 }

@@ -1,0 +1,365 @@
+{
+  "title": "The Mimir the Merrier",
+  "scoring": {
+    "direct": 10,
+    "pass": 5,
+    "matchPair": 5,
+    "jetSetter": 10,
+    "invisible": 10,
+    "music": 10,
+    "musicPenalty": 0
+  },
+  "rounds": [
+    {
+      "type": "quads",
+      "title": "Round 1 — Quads",
+      "sets": [
+        {
+          "questions": [
+            {
+              "q": "This US capital city was originally a tiny village called Lancaster, but it was abruptly renamed in 1869 to honor a man(famous for his top-hats) who had been assassinated just four years prior. What is the name of this capital city?",
+              "a": "Lincoln (Nebraska)",
+              "answerImage": "/media/dl/4ac6396bce4a34c1.webp"
+            },
+            {
+              "q": "Breaking onto the scene with a 'BangaRanga' of a hit, this singer won the 2026 Eurovision contest. To be potentially held in Sofia next year, which star(or country) was this?",
+              "a": "Dara/ Bulgaria",
+              "answerImage": "/media/dl/4d840310bce89577.webp"
+            },
+            {
+              "q": "This phenomenon was launched in Germany in 2017. It was co-founded by Christian Toetzke and Moritz Fürste, who wasn't a marathoner, or a bodybuilder. He actually won two Olympic Gold Medals for Germany in the surprisingly unrelated team sport of Field Hockey. What phenomenon did he start?",
+              "a": "Hyrox",
+              "answerImage": "/media/dl/b76f2114bb28ac71.jpg"
+            },
+            {
+              "q": "In early 2020, the internet was briefly captivated by a brand marketing campaign featuring the tragic 'death' of a 104-year-old mascot. He sacrificed himself by letting go of a cliffside branch so that actor Wesley Snipes could survive. Who was this sharply dressed casualty?",
+              "a": "Mr.Peanut",
+              "answerImage": "/media/dl/a6abb88492d71919.png"
+            }
+          ]
+        },
+        {
+          "questions": [
+            {
+              "q": "The gaming community is known for 'speedrunning' games like Super Mario, but in April 2026, the internet became completely obsessed with a real-life challenge. Creators filmed themselves trying to see how quickly they could get kicked out of the facilities of what specific, controversial organization?",
+              "a": "Scientology"
+            },
+            {
+              "q": "This midwestern state capital is named after the primary author of the Declaration of Independence. A known Francophile, he was responsible for effectively doubling the then size of US. What is the name of the capital?",
+              "a": "Jefferson City (Missouri)",
+              "answerImage": "/media/dl/3957151f53dc28ef.jpg"
+            },
+            {
+              "q": "In 1974, this legendary Swedish pop group won Eurovision with the song referencing Napoleon's famous last defeat, launching one of the best-selling music careers of all time. Which group is this?",
+              "a": "ABBA",
+              "answerImage": "/media/dl/ad7ab66c567d3be2.webp"
+            },
+            {
+              "q": "Created by Greg Glassman and Lauren Jenai as a combination of weightlifting and gymnastics. What games, started in 2007 have held winners such as Rich Froning Jr and Amoti",
+              "a": "CrossFit",
+              "answerImage": "/media/dl/c9c98cacedaab621.webp"
+            }
+          ]
+        },
+        {
+          "questions": [
+            {
+              "q": "Originally developed in 1920 by Matsuo Maeda, building on artforms designed as a way to counter Samurais, since strikes were useless against heavy armor. This sport later gained global popularity owing to the efforts of the Gracie family. What sport?",
+              "a": "Brazilian Jiujutsu"
+            },
+            {
+              "q": "Often paired with a hand gesture, this became a massive, entirely nonsensical 'brainrot' meme in 2024 and 2025. Originally stemming from a Skrilla rap song and the height of NBA player LaMelo Ball, students began using it as the default answer to literally any question. What is it?",
+              "a": "6-7",
+              "answerImage": "/media/dl/b703196c6461dc6d.jpg"
+            },
+            {
+              "q": "Sitting on an isthmus between two lakes, this northern capital shares its name with the man historically known as the 'Father of the Constitution' and one of the primary authors of the Federalist Papers. What city is it?",
+              "a": "Madison (Wisconson)"
+            },
+            {
+              "q": "In 1988, a then-unknown 20-year-old Canadian singer won Eurovision by exactly one point. She would 'go on' to record the soundtrack of one of the highest grossing movies in Hollywood. Who is this artist?",
+              "a": "Celine Dion"
+            }
+          ]
+        },
+        {
+          "questions": [
+            {
+              "q": "Although not in Europe, which nation was invited to perform for EuroVision in 2015 due to a passionate fan following and southern devotion, as they would reliably wake up at 3:00 AM to watch the show earning them a permanent spot?",
+              "a": "Australia"
+            },
+            {
+              "q": "Originally started in 1978 in Hawaii, to settle a friendly debate about whether runners, swimmers or cyclists were the fittest athlete. With grueling requirements and a strict time limit of 17 hours which title is this, inicidentally also held by Milind Soman.",
+              "a": "Ironman"
+            },
+            {
+              "q": "Part of a 2025 surrealist TikTok trend known as 'Italian Brainrot', this viral AI-generated character is known for her hypnotic pirouettes and dramatic divorce from her husband. Who is this dancer?",
+              "a": "Ballerina Cappucina",
+              "answerImage": "/media/dl/849cce5db4a81142.jpg"
+            },
+            {
+              "q": "His nickname was 'Old Hickory.' This southern capital city was named in his honor shortly after his famous military victory at the Battle of New Orleans. What is the city?",
+              "a": "Jackson (Mississppi)",
+              "answerImage": "/media/dl/213d848bd2221c22.jpg"
+            }
+          ]
+        }
+      ],
+      "subtitle": "Four sets of direct questions — miss yours and it passes to the next team.",
+      "quotes": [
+        {
+          "text": "There is nothing so absurd that some philosopher has not already said it.",
+          "author": "Marcus Tullius Cicero"
+        }
+      ]
+    },
+    {
+      "type": "match",
+      "title": "Round 2 — Match the Following",
+      "questions": [
+        {
+          "prompt": "How much is each President worth?",
+          "left": [
+            "/media/r3/c1/q1.jpg",
+            "/media/r3/c1/q2.jpg",
+            "/media/r3/c1/q3.jpg",
+            "/media/r3/c1/q4.jpg",
+            "/media/r3/c1/q5.jpg",
+            "/media/r3/c1/q6.jpg"
+          ],
+          "right": [
+            "/media/r3/c1/q4a.jpg",
+            "/media/r3/c1/q6a.jpg",
+            "/media/r3/c1/q2a.webp",
+            "/media/r3/c1/q5a.jpg",
+            "/media/r3/c1/q1a.jpg",
+            "/media/r3/c1/q3a.jpg"
+          ],
+          "answer": {
+            "1": "F",
+            "2": "D",
+            "3": "C",
+            "4": "A",
+            "5": "E",
+            "6": "B"
+          }
+        },
+        {
+          "_recovery": "images from disk; prompt/answer LOST — refill",
+          "prompt": "These birds have lost their way! Help them find their home.",
+          "left": [
+            "/media/r3/c2/q1.png",
+            "/media/r3/c2/q2.png",
+            "/media/r3/c2/q3.png",
+            "/media/r3/c2/q4.png",
+            "/media/r3/c2/q5.png",
+            "/media/r3/c2/q6.png"
+          ],
+          "right": [
+            "/media/r3/c2/q1a.png",
+            "/media/r3/c2/q2a.png",
+            "/media/r3/c2/q3a.png",
+            "/media/r3/c2/q4a.png",
+            "/media/r3/c2/q5a.png",
+            "/media/r3/c2/q6a.png"
+          ],
+          "answer": {}
+        },
+        {
+          "_recovery": "images from disk; prompt/answer LOST — refill",
+          "prompt": "TODO: prompt lost",
+          "left": [
+            "/media/r3/c3/q1.webp",
+            "/media/r3/c3/q2.jpeg",
+            "/media/r3/c3/q3.jpg",
+            "/media/r3/c3/q4.jpg",
+            "/media/r3/c3/q5.webp",
+            "/media/r3/c3/q6.webp"
+          ],
+          "right": [
+            "/media/r3/c3/q1a.jpg",
+            "/media/r3/c3/q2a.jpeg",
+            "/media/r3/c3/q3a.webp",
+            "/media/r3/c3/q4a.png",
+            "/media/r3/c3/q5a.jpeg",
+            "/media/r3/c3/q6a.jpg"
+          ],
+          "answer": {}
+        }
+      ]
+    },
+    {
+      "type": "jetsetters",
+      "title": "Round 3 — Jet Setters",
+      "_recovery": "8 questions; text LOST to transcript truncation",
+      "questions": [
+        {
+          "q": "TODO: lost Jet Setters question 1",
+          "a": ""
+        },
+        {
+          "q": "TODO: lost Jet Setters question 2",
+          "a": ""
+        },
+        {
+          "q": "TODO: lost Jet Setters question 3",
+          "a": ""
+        },
+        {
+          "q": "TODO: lost Jet Setters question 4",
+          "a": ""
+        },
+        {
+          "q": "TODO: lost Jet Setters question 5",
+          "a": ""
+        },
+        {
+          "q": "TODO: lost Jet Setters question 6",
+          "a": ""
+        },
+        {
+          "q": "TODO: lost Jet Setters question 7",
+          "a": ""
+        },
+        {
+          "q": "TODO: lost Jet Setters question 8",
+          "a": ""
+        }
+      ]
+    },
+    {
+      "type": "invisibles",
+      "title": "Round 4 — Invisibles",
+      "_recovery": "images from disk; answers (what each is) LOST",
+      "questions": [
+        {
+          "image": "/media/r4/q1.jpg",
+          "a": "TODO: answer lost",
+          "answerImage": "/media/r4/q1a.jpg"
+        },
+        {
+          "image": "/media/r4/q2.jpg",
+          "a": "TODO: answer lost",
+          "answerImage": "/media/r4/q2a.jpg"
+        },
+        {
+          "image": "/media/r4/q3.jpg",
+          "a": "TODO: answer lost",
+          "answerImage": "/media/r4/q3a.jpg"
+        },
+        {
+          "image": "/media/r4/q4.jpg",
+          "a": "TODO: answer lost",
+          "answerImage": "/media/r4/q4a.jpg"
+        },
+        {
+          "image": "/media/r4/q5.jpg",
+          "a": "TODO: answer lost",
+          "answerImage": "/media/r4/q5a.jpg"
+        },
+        {
+          "image": "/media/r4/q6.jpg",
+          "a": "TODO: answer lost",
+          "answerImage": "/media/r4/q6a.jpg"
+        },
+        {
+          "image": "/media/r4/q7.jpeg",
+          "a": "TODO: answer lost",
+          "answerImage": "/media/r4/q7a.jpeg"
+        },
+        {
+          "image": "/media/r4/q8.jpeg",
+          "a": "TODO: answer lost",
+          "answerImage": "/media/r4/q8a.jpeg"
+        },
+        {
+          "image": "/media/r4/q9.jpeg",
+          "a": "TODO: answer lost",
+          "answerImage": "/media/r4/q9a.jpeg"
+        },
+        {
+          "image": "/media/r4/q10.jpeg",
+          "a": "TODO: answer lost",
+          "answerImage": "/media/r4/q10a.jpeg"
+        },
+        {
+          "image": "/media/r4/q11.jpeg",
+          "a": "TODO: answer lost",
+          "answerImage": "/media/r4/q11a.jpeg"
+        },
+        {
+          "image": "/media/r4/q12.jpg",
+          "a": "TODO: answer lost",
+          "answerImage": "/media/r4/q12a.jpg"
+        }
+      ]
+    },
+    {
+      "type": "music",
+      "title": "Round 5 — Music",
+      "_recovery": "clips from disk; titles LOST. Hint files: Kgf_full.mp3, devara_full.mp3, dexter_full.mp3, don_theme.mp3, inception_full.mp3, mohobattein_full.mp3, rolex_full.mp3, severance_theme.mp3",
+      "questions": [
+        {
+          "audio": "/media/music/q1.mp3",
+          "q": "Name the song/theme",
+          "a": "TODO: title lost"
+        },
+        {
+          "audio": "/media/music/q2.mp3",
+          "q": "Name the song/theme",
+          "a": "TODO: title lost"
+        },
+        {
+          "audio": "/media/music/q3.mp3",
+          "q": "Name the song/theme",
+          "a": "TODO: title lost"
+        },
+        {
+          "audio": "/media/music/q4.mp3",
+          "q": "Name the song/theme",
+          "a": "TODO: title lost"
+        },
+        {
+          "audio": "/media/music/q5.mp3",
+          "q": "Name the song/theme",
+          "a": "TODO: title lost"
+        },
+        {
+          "audio": "/media/music/q6.mp3",
+          "q": "Name the song/theme",
+          "a": "TODO: title lost"
+        },
+        {
+          "audio": "/media/music/q7.mp3",
+          "q": "Name the song/theme",
+          "a": "TODO: title lost"
+        },
+        {
+          "audio": "/media/music/q8.mp3",
+          "q": "Name the song/theme",
+          "a": "TODO: title lost"
+        },
+        {
+          "audio": "/media/music/q9.mp3",
+          "q": "Name the song/theme",
+          "a": "TODO: title lost"
+        },
+        {
+          "audio": "/media/music/q10.mp3",
+          "q": "Name the song/theme",
+          "a": "TODO: title lost"
+        },
+        {
+          "audio": "/media/music/q11.mp3",
+          "q": "Name the song/theme",
+          "a": "TODO: title lost"
+        },
+        {
+          "audio": "/media/music/q12.mp3",
+          "q": "Name the song/theme",
+          "a": "TODO: title lost"
+        }
+      ]
+    }
+  ]
+}

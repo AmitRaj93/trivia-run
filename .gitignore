@@ -1,0 +1,9 @@
+node_modules/
+.next/
+.data/
+npm-debug.log*
+.DS_Store
+.env*.local
+
+# Media assets (images/audio) — large binaries kept out of git
+content/public/media/

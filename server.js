@@ -141,6 +141,27 @@ function handleMessage(ws, raw) {
     case C2S.REQUEST_TEAM: {
       const game = getRoom(msg.roomCode);
       if (!game) return send(ws, S2C.ERROR, { message: 'Room not found' });
+
+      // If a team with this name already exists and its session has dropped, let
+      // this new device reclaim it directly (no host re-approval needed).
+      const takeover = game.takeoverTeam(msg.teamName);
+      if (takeover.team) {
+        ws.roomCode = game.roomCode;
+        ws.role = ROLES.REP;
+        ws.teamId = takeover.team.id;
+        addClientToRoom(game.roomCode, ws);
+        send(ws, S2C.JOINED, {
+          roomCode: game.roomCode,
+          role: ROLES.REP,
+          teamId: takeover.team.id,
+          repToken: takeover.team.repToken,
+        });
+        return broadcastState(game);
+      }
+      if (takeover.busy) {
+        return send(ws, S2C.ERROR, { message: 'A team with that name is already connected. Use a different name.' });
+      }
+
       if (game.teams.size >= game.config.maxTeams) {
         return send(ws, S2C.ERROR, { message: 'This game is full (max teams reached)' });
       }
