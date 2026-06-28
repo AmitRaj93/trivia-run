@@ -3,6 +3,7 @@
 // right model for a single live event on one host machine.
 
 import { createServer } from 'http';
+import { timingSafeEqual } from 'crypto';
 import next from 'next';
 import { WebSocketServer } from 'ws';
 import { createRoom, getRoom, serializeRooms, restoreRooms } from './lib/game.js';
@@ -29,6 +30,16 @@ function removeClientFromRoom(code, ws) {
 }
 function send(ws, type, data = {}) {
   if (ws.readyState === ws.OPEN) ws.send(JSON.stringify({ type, ...data }));
+}
+
+// Constant-time host passcode check (no early-exit length/char leak). When no
+// passcode is configured, the console is open — fine for local testing.
+function passcodeOk(provided) {
+  const expected = process.env.HOST_PASSCODE;
+  if (!expected) return true;
+  const a = Buffer.from(String(provided ?? ''));
+  const b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
 }
 
 // Keep the server's expiry setTimeout in step with whatever the game's timer is
@@ -126,7 +137,7 @@ function handleMessage(ws, raw) {
       // Only someone with the host passcode may open a room and become host
       // (host snapshots include the answer keys). If HOST_PASSCODE is unset,
       // no passcode is required — fine for local testing.
-      if (process.env.HOST_PASSCODE && msg.passcode !== process.env.HOST_PASSCODE) {
+      if (!passcodeOk(msg.passcode)) {
         return send(ws, S2C.ERROR, { message: 'Incorrect host passcode' });
       }
       const game = createRoom();
