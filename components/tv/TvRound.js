@@ -222,5 +222,5 @@ function FitImage({ src, minVh = 0 }) {
 }
 
 function isImage(url) {
-  return /^https?:|^\/|\.(png|jpe?g|gif|webp|avif)$/i.test(url) && !/\.(mp3|wav|ogg|m4a)$/i.test(url);
+  return typeof url === 'string' && /^https?:|^\/|\.(png|jpe?g|gif|webp|avif)$/i.test(url) && !/\.(mp3|wav|ogg|m4a)$/i.test(url);
 }
