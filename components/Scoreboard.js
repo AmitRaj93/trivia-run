@@ -45,7 +45,7 @@ export default function Scoreboard({ teams = [], big = false, highlightId = null
               style={{
                 position: 'absolute',
                 inset: 0,
-                width: `${(t.score / max) * 100}%`,
+                width: `${Math.max(0, Math.min(100, (t.score / max) * 100))}%`,
                 background: 'linear-gradient(90deg, var(--accent), var(--accent-2))',
               }}
             />
