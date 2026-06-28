@@ -6,7 +6,7 @@ import { createServer } from 'http';
 import next from 'next';
 import { WebSocketServer } from 'ws';
 import { createRoom, getRoom, serializeRooms, restoreRooms } from './lib/game.js';
-import { ROLES, C2S, S2C, ACTIONS } from './lib/protocol.js';
+import { ROLES, C2S, S2C, ACTIONS, MAX_PENDING } from './lib/protocol.js';
 import { scheduleSave, loadState } from './lib/persistence.js';
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -143,6 +143,10 @@ function handleMessage(ws, raw) {
       if (!game) return send(ws, S2C.ERROR, { message: 'Room not found' });
       if (game.teams.size >= game.config.maxTeams) {
         return send(ws, S2C.ERROR, { message: 'This game is full (max teams reached)' });
+      }
+      if (ws.pendingReqId) game.removePending(ws.pendingReqId); // one live request per socket
+      if (game.pending.size >= MAX_PENDING) {
+        return send(ws, S2C.ERROR, { message: 'Too many pending requests — try again shortly' });
       }
       const reqId = game.addPending(msg.teamName, msg.repName);
       ws.roomCode = game.roomCode;
