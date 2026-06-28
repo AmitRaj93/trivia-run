@@ -167,6 +167,16 @@ function handleMessage(ws, raw) {
         ws.teamId = team.id;
         addClientToRoom(game.roomCode, ws);
         send(ws, S2C.JOINED, { roomCode: game.roomCode, role: ROLES.REP, teamId: team.id });
+      } else if (msg.role === ROLES.HOST) {
+        // Host re-attach after a drop: rejoins the existing room (keeping its
+        // teams and code) instead of minting a new one. Still passcode-gated, so
+        // only the quizmaster can reclaim host (and the answer keys).
+        if (process.env.HOST_PASSCODE && msg.passcode !== process.env.HOST_PASSCODE) {
+          return send(ws, S2C.ERROR, { message: 'Incorrect host passcode' });
+        }
+        ws.role = ROLES.HOST;
+        addClientToRoom(game.roomCode, ws);
+        send(ws, S2C.JOINED, { roomCode: game.roomCode, role: ROLES.HOST });
       } else {
         // JOIN can only ever grant tv/viewer. The host role is handed out solely
         // by a passcode-checked CREATE, so a client can't claim it (and the answer
